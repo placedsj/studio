@@ -88,7 +88,10 @@ export default function JournalPage() {
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold font-headline tracking-tight">Family Journal</h1>
+        <div>
+          <h1 className="text-3xl font-bold font-headline tracking-tight">Family Journal</h1>
+          <p className="text-muted-foreground mt-1">Share precious moments and milestones.</p>
+        </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
@@ -193,7 +196,7 @@ export default function JournalPage() {
           </DialogContent>
         </Dialog>
       </div>
-       <div className="grid gap-6 md:grid-cols-2">
+       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {entries.map((entry, index) => (
           <Card key={index} className="overflow-hidden">
              <Image src={entry.image || 'https://picsum.photos/400/200'} data-ai-hint={entry.dataAiHint} alt={entry.title} width={400} height={200} className="object-cover w-full aspect-video" />
