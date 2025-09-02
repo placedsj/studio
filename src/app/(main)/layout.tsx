@@ -36,7 +36,7 @@ export default function AppLayout({
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/20 shrink-0">
                  <Users className="h-5 w-5 text-primary" />
               </div>
-              <h1 className="text-xl font-headline font-bold group-data-[collapsible=icon]:hidden">FamilyVerse</h1>
+              <h1 className="text-xl font-headline font-bold group-data-[collapsible=icon]:hidden">Harper's Home</h1>
             </Link>
           </Button>
         </SidebarHeader>

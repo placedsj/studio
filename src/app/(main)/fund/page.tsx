@@ -5,7 +5,7 @@ import type { Metadata } from 'next';
 import { Progress } from '@/components/ui/progress';
 
 export const metadata: Metadata = {
-  title: "Harper's Fund | FamilyVerse",
+  title: "Shared Fund | Harper's Home",
 };
 
 export default function FundPage() {
@@ -22,7 +22,7 @@ export default function FundPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-bold font-headline tracking-tight">Harper's Fund Management</h1>
+      <h1 className="text-3xl font-bold font-headline tracking-tight">Shared Fund Management</h1>
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
             <CardHeader>

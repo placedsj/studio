@@ -7,13 +7,13 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Dashboard | FamilyVerse',
+  title: "Dashboard | Harper's Home",
 };
 
 const quickLinks = [
     { href: "/calendar", icon: Calendar, title: "Family Calendar", description: "Coordinate schedules & events." },
     { href: "/journal", icon: BookHeart, title: "Family Journal", description: "Share precious moments." },
-    { href: "/fund", icon: Landmark, title: "Harper's Fund", description: "Manage shared expenses." },
+    { href: "/fund", icon: Landmark, title: "Shared Fund", description: "Manage shared expenses." },
     { href: "/milestones", icon: TrendingUp, title: "Milestones", description: "Track developmental progress." },
     { href: "/documents", icon: FileText, title: "Secure Documents", description: "Store important files safely." },
 ];

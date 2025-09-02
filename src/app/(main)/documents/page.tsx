@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 import { Button } from '@/components/ui/button';
 
 export const metadata: Metadata = {
-  title: 'Documents | FamilyVerse',
+  title: "Documents | Harper's Home",
 };
 
 export default function DocumentsPage() {

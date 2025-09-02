@@ -9,7 +9,7 @@ const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: Home },
   { href: '/calendar', label: 'Calendar', icon: Calendar },
   { href: '/journal', label: 'Journal', icon: BookHeart },
-  { href: '/fund', label: 'Harpers Fund', icon: Landmark },
+  { href: '/fund', label: 'Shared Fund', icon: Landmark },
   { href: '/milestones', label: 'Milestones', icon: TrendingUp },
   { href: '/documents', label: 'Documents', icon: FileText },
 ];
