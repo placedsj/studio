@@ -4,7 +4,7 @@
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import {
-    Home, Calendar, BookHeart, Landmark, TrendingUp, FileText, Baby, Heart, AlertTriangle, Users, MessagesSquare, Wand2, FileClock, ScanLine, FileSearch, ChevronDown, LayoutDashboard, HeartPulse, Gavel
+    Home, Calendar, BookHeart, Landmark, TrendingUp, FileText, Baby, Heart, AlertTriangle, Users, MessagesSquare, Wand2, FileClock, ScanLine, FileSearch, ChevronDown, LayoutDashboard, HeartPulse, Gavel, Sparkles
 } from 'lucide-react';
 import {
     SidebarMenu,
@@ -60,6 +60,7 @@ const navGroups = [
     items: [
       { href: '/messaging', label: 'Messaging', icon: MessagesSquare },
       { href: '/communication', label: 'Communication Coach', icon: Wand2 },
+      { href: '/coparenting-actions', label: 'Co-parenting Actions', icon: Sparkles },
     ]
   },
 ];
