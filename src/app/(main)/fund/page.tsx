@@ -10,9 +10,9 @@ export const metadata: Metadata = {
 
 export default function FundPage() {
     const transactions = [
-        { date: "2023-11-01", description: "Parent A Contribution", category: "Contribution", amount: 250.00 },
+        { date: "2023-11-01", description: "Emma's Contribution", category: "Contribution", amount: 250.00 },
         { date: "2023-11-02", description: "Fall Soccer League Fees", category: "Activities", amount: -75.00 },
-        { date: "2023-11-05", description: "Parent B Contribution", category: "Contribution", amount: 250.00 },
+        { date: "2023-11-05", description: "Craig's Contribution", category: "Contribution", amount: 250.00 },
         { date: "2023-11-10", description: "Winter Coat", category: "Clothing", amount: -55.50 },
         { date: "2023-11-15", description: "Doctor's Visit Co-pay", category: "Medical", amount: -30.00 },
     ];

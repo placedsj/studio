@@ -15,9 +15,9 @@ export default function EmergencyPage() {
     ];
 
     const emergencyContacts = [
-        { name: "Jane Doe", relation: "Parent", phone: "555-0103" },
-        { name: "John Smith", relation: "Parent", phone: "555-0104" },
-        { name: "Mary Majors", relation: "Grandmother", phone: "555-0105" },
+        { name: "Emma Ryan", relation: "Parent", phone: "555-0103" },
+        { name: "Craig Schulz", relation: "Parent", phone: "555-0104" },
+        { name: "Nanny Ryan (Jane)", relation: "Grandmother", phone: "555-0105" },
     ];
 
   return (
