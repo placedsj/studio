@@ -1,3 +1,4 @@
+// src/app/(main)/fund/page.tsx
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
@@ -22,11 +23,17 @@ export default function FundPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-bold font-headline tracking-tight">Shared Fund Management</h1>
+      <div>
+        <h1 className="text-3xl font-bold font-headline tracking-tight">Shared Fund Management</h1>
+        <p className="text-muted-foreground mt-1">
+          A transparent record of shared expenses for Harper.
+        </p>
+      </div>
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
             <CardHeader>
                 <CardTitle>Current Balance</CardTitle>
+                <CardDescription>The total amount available in the shared fund.</CardDescription>
             </CardHeader>
             <CardContent>
                 <p className="text-4xl font-bold">${balance.toFixed(2)}</p>
@@ -35,29 +42,30 @@ export default function FundPage() {
         </Card>
         <Card>
             <CardHeader>
-                <CardTitle>Expense Categories</CardTitle>
+                <CardTitle>Expense Breakdown</CardTitle>
+                <CardDescription>A summary of spending by category.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
                  <div>
                     <div className="flex justify-between mb-1">
                         <span className="text-sm font-medium">Activities</span>
-                        <span className="text-sm text-muted-foreground">40%</span>
+                        <span className="text-sm text-muted-foreground">$75.00</span>
                     </div>
                     <Progress value={40} aria-label="40% of expenses on Activities" />
                  </div>
                  <div>
                     <div className="flex justify-between mb-1">
                         <span className="text-sm font-medium">Clothing</span>
-                        <span className="text-sm text-muted-foreground">30%</span>
+                        <span className="text-sm text-muted-foreground">$55.50</span>
                     </div>
                     <Progress value={30} aria-label="30% of expenses on Clothing" />
                  </div>
                  <div>
                     <div className="flex justify-between mb-1">
                         <span className="text-sm font-medium">Medical</span>
-                        <span className="text-sm text-muted-foreground">30%</span>
+                        <span className="text-sm text-muted-foreground">$30.00</span>
                     </div>
-                    <Progress value={30} aria-label="30% of expenses on Medical" />
+                    <Progress value={20} aria-label="20% of expenses on Medical" />
                  </div>
             </CardContent>
         </Card>
@@ -83,8 +91,15 @@ export default function FundPage() {
                         <TableRow key={i}>
                             <TableCell>{t.date}</TableCell>
                             <TableCell>{t.description}</TableCell>
-                            <TableCell><Badge variant={t.amount > 0 ? "default" : "secondary"} className={t.amount > 0 ? "bg-accent text-accent-foreground" : ""}>{t.category}</Badge></TableCell>
-                            <TableCell className={`text-right font-medium ${t.amount > 0 ? 'text-foreground' : 'text-destructive'}`}>
+                            <TableCell>
+                                <Badge 
+                                    variant={t.amount > 0 ? "default" : "secondary"} 
+                                    className={t.amount > 0 ? "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200" : ""}
+                                >
+                                    {t.category}
+                                </Badge>
+                            </TableCell>
+                            <TableCell className={`text-right font-medium ${t.amount > 0 ? 'text-green-600 dark:text-green-400' : 'text-destructive'}`}>
                                 {t.amount > 0 ? '+' : ''}${t.amount.toFixed(2)}
                             </TableCell>
                         </TableRow>
