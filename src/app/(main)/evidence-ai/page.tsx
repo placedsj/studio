@@ -4,10 +4,8 @@
 import { useState, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Upload, Wand2, ArrowRight, FilePlus, FileText } from 'lucide-react';
+import { Loader2, Upload, Wand2, FilePlus, FileText } from 'lucide-react';
 import { processEvidenceImage, ProcessEvidenceImageOutput } from '@/ai/flows/process-evidence-image';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -129,15 +127,16 @@ export default function EvidenceAiPage() {
           </CardHeader>
           <CardContent>
             {isLoading && (
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Loader2 className="animate-spin" />
-                <span>Analyzing image...</span>
+              <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+                <Loader2 className="animate-spin h-8 w-8 mb-2" />
+                <p>Analyzing your image...</p>
               </div>
             )}
             {!result && !isLoading && (
               <div className="text-center text-muted-foreground py-10">
                 <FileText className="mx-auto h-12 w-12" />
-                <p>Your analysis will appear here.</p>
+                <p className="mt-2 font-semibold">Your analysis will appear here.</p>
+                <p className="text-sm">Upload an image and click analyze to get started.</p>
               </div>
             )}
             {result && (
