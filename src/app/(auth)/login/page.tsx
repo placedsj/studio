@@ -13,6 +13,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/use-auth';
 import Link from "next/link";
 import { Loader2 } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
+import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
   email: z.string().email('Invalid email address.'),
@@ -23,6 +25,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const { logIn } = useAuth();
   const { toast } = useToast();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -46,6 +49,10 @@ export default function LoginPage() {
       setIsLoading(false);
     }
   }
+
+  const handleGuestMode = () => {
+    router.push('/dashboard');
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen">
@@ -99,6 +106,10 @@ export default function LoginPage() {
               </Button>
             </form>
           </Form>
+          <Separator className="my-4" />
+           <Button variant="secondary" className="w-full" onClick={handleGuestMode}>
+                Continue as Guest
+            </Button>
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{" "}
             <Link href="/signup" className="underline">
