@@ -3,7 +3,6 @@
 
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { 
-  getAuth, 
   onAuthStateChanged, 
   User, 
   createUserWithEmailAndPassword, 
