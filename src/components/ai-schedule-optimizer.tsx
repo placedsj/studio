@@ -1,3 +1,4 @@
+// src/components/ai-schedule-optimizer.tsx
 'use client';
 
 import { useState } from 'react';
@@ -27,9 +28,9 @@ export function AiScheduleOptimizer() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      parentalNeeds: '',
-      childWellbeingFactors: '',
-      externalFactors: '',
+      parentalNeeds: "Parent A works 9-5 M-F. Parent B works remotely with a flexible schedule but often travels for work on weekends.",
+      childWellbeingFactors: "Harper is 8 years old and has after-school soccer on Tuesdays and Thursdays. She does best with a consistent routine and shorter transitions between homes.",
+      externalFactors: "School events are typically on the first Friday of each month. Harper has a standing doctor's appointment on the second Wednesday of every other month.",
     },
   });
 
@@ -56,7 +57,7 @@ export function AiScheduleOptimizer() {
       <Card>
         <CardHeader>
             <CardTitle>Provide Context</CardTitle>
-            <CardDescription>The more details you provide, the better the AI can tailor the schedule.</CardDescription>
+            <CardDescription>The more details you provide, the better the AI can tailor the schedule. Here are some examples to get you started.</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -100,7 +101,7 @@ export function AiScheduleOptimizer() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" disabled={isLoading}>
+              <Button type="submit" disabled={isLoading} size="lg" className="w-full sm:w-auto">
                 {isLoading ? <Loader2 className="animate-spin" /> : <Wand2 />}
                 <span>{isLoading ? 'Generating...' : 'Optimize Schedule'}</span>
               </Button>
@@ -109,12 +110,19 @@ export function AiScheduleOptimizer() {
         </CardContent>
       </Card>
 
+      {isLoading && (
+         <div className="flex flex-col items-center justify-center text-muted-foreground pt-10">
+            <Loader2 className="animate-spin h-8 w-8 mb-2" />
+            <p>The AI is analyzing the details and crafting schedule options...</p>
+          </div>
+      )}
+
       {result && (
-        <div className="space-y-8">
-            <Separator />
+        <div className="space-y-8 pt-4">
             <Card>
                 <CardHeader>
                     <CardTitle>Suggested Schedule</CardTitle>
+                    <CardDescription>This is one potential schedule optimized based on the information you provided.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <pre className="whitespace-pre-wrap font-body text-sm bg-muted p-4 rounded-md">{result.optimizedSchedule}</pre>
@@ -123,9 +131,10 @@ export function AiScheduleOptimizer() {
             <Card>
                 <CardHeader>
                     <CardTitle>Reasoning</CardTitle>
+                     <CardDescription>Here's why the AI made these suggestions.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                     <p className="text-sm leading-relaxed">{result.reasoning}</p>
+                     <p className="text-sm leading-relaxed whitespace-pre-wrap">{result.reasoning}</p>
                 </CardContent>
             </Card>
         </div>
