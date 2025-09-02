@@ -11,8 +11,8 @@ export const metadata: Metadata = {
 const familyMembers = {
     harper: { name: "Harper Ryan", dob: "11/12/2024", initials: "HR" },
     parents: [
-        { name: "Craig Schulz", dob: "03/23/1990", initials: "CS" },
-        { name: "Emma Ryan", dob: "12/15/1995", initials: "ER" },
+        { name: "Dad (Craig)", dob: "03/23/1990", initials: "D" },
+        { name: "Mom (Emma)", dob: "12/15/1995", initials: "M" },
     ],
     maternalGrandparents: [
         { name: "Nanny Ryan (Jane)", initials: "JR" },
@@ -79,7 +79,7 @@ export default function FamilyTreePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Emma's Family</CardTitle>
+                        <CardTitle>Mom's Family</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-6">
                         <div>
@@ -105,7 +105,7 @@ export default function FamilyTreePage() {
 
                  <Card>
                     <CardHeader>
-                        <CardTitle>Craig's Family</CardTitle>
+                        <CardTitle>Dad's Family</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-6">
                         <div>

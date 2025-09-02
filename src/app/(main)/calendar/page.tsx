@@ -17,24 +17,24 @@ type CalendarEvent = {
 // --- Data based on family tree and user request ---
 const familyBirthdays = [
     { name: "Harper Ryan", date: new Date(2024, 10, 12) }, // Nov 12
-    { name: "Craig Schulz", date: new Date(1990, 2, 23) },  // Mar 23
-    { name: "Emma Ryan", date: new Date(1995, 11, 15) }, // Dec 15
+    { name: "Dad (Craig)", date: new Date(1990, 2, 23) },  // Mar 23
+    { name: "Mom (Emma)", date: new Date(1995, 11, 15) }, // Dec 15
 ];
 
 const custodyParents = {
-    craig: { name: "Craig Schulz", color: "bg-blue-200 dark:bg-blue-800" },
-    emma: { name: "Emma Ryan", color: "bg-pink-200 dark:bg-pink-800" },
+    dad: { name: "Dad", color: "bg-blue-200 dark:bg-blue-800" },
+    mom: { name: "Mom", color: "bg-pink-200 dark:bg-pink-800" },
 };
 
 // --- Custody Schedule Logic ---
 // 2-3-2-2 schedule repeats every 14 days
 const scheduleRotation = [
-    custodyParents.emma, custodyParents.emma, // Mon, Tue (2)
-    custodyParents.craig, custodyParents.craig, // Wed, Thu (2)
-    custodyParents.emma, custodyParents.emma, custodyParents.emma, // Fri, Sat, Sun (3)
-    custodyParents.craig, custodyParents.craig, // Mon, Tue (2)
-    custodyParents.emma, custodyParents.emma, // Wed, Thu (2)
-    custodyParents.craig, custodyParents.craig, custodyParents.craig, // Fri, Sat, Sun (3)
+    custodyParents.mom, custodyParents.mom, // Mon, Tue (2)
+    custodyParents.dad, custodyParents.dad, // Wed, Thu (2)
+    custodyParents.mom, custodyParents.mom, custodyParents.mom, // Fri, Sat, Sun (3)
+    custodyParents.dad, custodyParents.dad, // Mon, Tue (2)
+    custodyParents.mom, custodyParents.mom, // Wed, Thu (2)
+    custodyParents.dad, custodyParents.dad, custodyParents.dad, // Fri, Sat, Sun (3)
 ];
 
 // Let's set a fixed start date for the rotation to be consistent
@@ -67,7 +67,7 @@ export default function CalendarPage() {
         monthEvents.push({
             date: new Date(day),
             type: 'custody',
-            title: `${custody.name}'s Day`
+            title: `With ${custody.name}`
         });
     }
 
@@ -88,13 +88,13 @@ export default function CalendarPage() {
   }, [date]);
 
   const custodyModifiers = {
-      emma: (day: Date) => getCustodyForDate(day) === custodyParents.emma,
-      craig: (day: Date) => getCustodyForDate(day) === custodyParents.craig,
+      mom: (day: Date) => getCustodyForDate(day) === custodyParents.mom,
+      dad: (day: Date) => getCustodyForDate(day) === custodyParents.dad,
   };
   
   const custodyModifiersClassNames = {
-      emma: 'bg-pink-100 text-pink-900 dark:bg-pink-900/50 dark:text-pink-100 rounded-none',
-      craig: 'bg-blue-100 text-blue-900 dark:bg-blue-900/50 dark:text-blue-100 rounded-none',
+      mom: 'bg-pink-100 text-pink-900 dark:bg-pink-900/50 dark:text-pink-100 rounded-none',
+      dad: 'bg-blue-100 text-blue-900 dark:bg-blue-900/50 dark:text-blue-100 rounded-none',
   };
 
   const birthdayModifier = (day: Date) => {
@@ -138,11 +138,11 @@ export default function CalendarPage() {
                 <CardContent className="space-y-2">
                     <div className="flex items-center gap-2">
                         <div className="w-4 h-4 rounded-full bg-pink-100 border"></div>
-                        <span className="text-sm">{custodyParents.emma.name}</span>
+                        <span className="text-sm">{custodyParents.mom.name}</span>
                     </div>
                      <div className="flex items-center gap-2">
                         <div className="w-4 h-4 rounded-full bg-blue-100 border"></div>
-                        <span className="text-sm">{custodyParents.craig.name}</span>
+                        <span className="text-sm">{custodyParents.dad.name}</span>
                     </div>
                      <div className="flex items-center gap-2">
                         <div className="w-4 h-4 rounded-full border-2 border-primary"></div>
@@ -162,7 +162,7 @@ export default function CalendarPage() {
                             {selectedDayEvents.map((event, index) => (
                                 <li key={index} className="flex items-center gap-2">
                                     {event.type === 'custody' && (
-                                        <Badge variant={event.title.includes('Emma') ? 'secondary' : 'default'} className={event.title.includes('Emma') ? 'bg-pink-100 text-pink-900' : 'bg-blue-100 text-blue-900'}>Custody</Badge>
+                                        <Badge variant={event.title.includes('Mom') ? 'secondary' : 'default'} className={event.title.includes('Mom') ? 'bg-pink-100 text-pink-900' : 'bg-blue-100 text-blue-900'}>Custody</Badge>
                                     )}
                                     {event.type === 'birthday' && (
                                         <Badge variant="default" className="bg-primary/20 text-primary-foreground"><Cake /></Badge>
