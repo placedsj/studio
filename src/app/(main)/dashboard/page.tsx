@@ -1,5 +1,4 @@
 // src/app/(main)/dashboard/page.tsx
-import { AiScheduleOptimizer } from '@/components/ai-schedule-optimizer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { BookHeart, Calendar, FileText, Landmark, TrendingUp } from 'lucide-react';
@@ -74,18 +73,6 @@ export default function DashboardPage() {
                 </CardContent>
             </Card>
         </div>
-      </div>
-      
-      <Separator />
-
-      <div className="space-y-4">
-        <div>
-            <h2 className="text-2xl font-bold font-headline tracking-tight">AI Schedule Optimizer</h2>
-            <p className="text-muted-foreground mt-1">
-            Let our AI help you find the best custody schedule that prioritizes your child's well-being.
-            </p>
-        </div>
-        <AiScheduleOptimizer />
       </div>
 
     </div>
