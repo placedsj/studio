@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 const quickLinks = [
-    { href: "/calendar", icon: Calendar, title: "Family Calendar", description: "Coordinate schedules & events." },
+    { href: "/calendar", icon: Calendar, title: "Family Calendar", description: "View custody schedules & birthdays." },
     { href: "/journal", icon: BookHeart, title: "Family Journal", description: "Share precious moments." },
     { href: "/fund", icon: Landmark, title: "Shared Fund", description: "Manage shared expenses." },
     { href: "/milestones", icon: TrendingUp, title: "Milestones", description: "Track developmental progress." },
