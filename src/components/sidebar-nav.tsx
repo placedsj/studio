@@ -1,7 +1,8 @@
+
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { Home, Calendar, BookHeart, Landmark, TrendingUp, FileText, Baby, Heart, AlertTriangle, Users } from 'lucide-react';
+import { Home, Calendar, BookHeart, Landmark, TrendingUp, FileText, Baby, Heart, AlertTriangle, Users, MessagesSquare } from 'lucide-react';
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import Link from 'next/link';
 
@@ -9,6 +10,7 @@ const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: Home },
   { href: '/calendar', label: 'Calendar', icon: Calendar },
   { href: '/journal', label: 'Journal', icon: BookHeart },
+  { href: '/communication', label: 'Communication', icon: MessagesSquare },
   { href: '/fund', label: 'Shared Fund', icon: Landmark },
   { href: '/milestones', label: 'Milestones', icon: TrendingUp },
   { href: '/documents', label: 'Documents', icon: FileText },
