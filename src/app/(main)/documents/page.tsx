@@ -22,7 +22,7 @@ export default function DocumentsPage() {
     <div className="space-y-8">
        <div className="flex items-center justify-between">
         <div>
-            <h1 className="text-3xl font-bold font-headline tracking-tight">Secure Documents</h1>
+            <h1 className="text-3xl font-bold font-headline uppercase tracking-tight">Secure Documents</h1>
             <p className="text-muted-foreground mt-1">
                 A central, secure place for all of Harper's important files.
             </p>

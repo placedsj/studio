@@ -24,7 +24,7 @@ export default function EmergencyPage() {
   return (
     <div className="space-y-8">
        <div>
-        <h1 className="text-3xl font-bold font-headline tracking-tight">Emergency Information</h1>
+        <h1 className="text-3xl font-bold font-headline uppercase tracking-tight">Emergency Information</h1>
         <p className="text-muted-foreground mt-1">
             Quick access to critical contacts and information.
         </p>

@@ -21,7 +21,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold font-headline tracking-tight">Welcome Back</h1>
+        <h1 className="text-3xl font-bold font-headline uppercase tracking-tight">Welcome Back</h1>
         <p className="text-muted-foreground mt-1">
           Here's a quick overview of your co-parenting landscape.
         </p>

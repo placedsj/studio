@@ -1,43 +1,110 @@
-
+// src/components/sidebar-nav.tsx
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { Home, Calendar, BookHeart, Landmark, TrendingUp, FileText, Baby, Heart, AlertTriangle, Users, MessagesSquare, Wand2, FileClock, ScanLine, FileSearch } from 'lucide-react';
-import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import Link from 'next/link';
+import {
+    Home, Calendar, BookHeart, Landmark, TrendingUp, FileText, Baby, Heart, AlertTriangle, Users, MessagesSquare, Wand2, FileClock, ScanLine, FileSearch, ChevronDown, LayoutDashboard, HeartPulse, Gavel
+} from 'lucide-react';
+import {
+    SidebarMenu,
+    SidebarMenuItem,
+    SidebarMenuButton,
+} from '@/components/ui/sidebar';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { cn } from '@/lib/utils';
+import { useState } from 'react';
 
-const navItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: Home },
-  { href: '/calendar', label: 'Calendar', icon: Calendar },
-  { href: '/journal', label: 'Journal', icon: BookHeart },
-  { href: '/communication', label: 'Communication', icon: MessagesSquare },
-  { href: '/fund', label: 'Shared Fund', icon: Landmark },
-  { href: '/milestones', label: 'Milestones', icon: TrendingUp },
-  { href: '/documents', label: 'Documents', icon: FileText },
-  { href: '/evidence-log', label: 'Evidence Log', icon: FileClock },
-  { href: '/evidence-ai', label: 'Evidence AI', icon: ScanLine },
-  { href: '/document-analyzer', label: 'Document Analyzer', icon: FileSearch },
-  { href: '/log', label: "Harper's Log", icon: Baby },
-  { href: '/profile', label: "Harper's Profile", icon: Heart },
-  { href: '/family-tree', label: 'Family Tree', icon: Users },
-  { href: '/emergency', label: 'Emergency', icon: AlertTriangle },
-  { href: '/schedule-optimizer', label: 'Schedule Optimizer', icon: Wand2 },
+const navGroups = [
+  {
+    title: 'Daily',
+    icon: LayoutDashboard,
+    items: [
+      { href: '/dashboard', label: 'Dashboard', icon: Home },
+      { href: '/calendar', label: 'Calendar', icon: Calendar },
+      { href: '/journal', label: 'Journal', icon: BookHeart },
+      { href: '/log', label: "Harper's Log", icon: Baby },
+      { href: '/milestones', label: 'Milestones', icon: TrendingUp },
+    ],
+  },
+  {
+    title: 'Financial',
+    icon: Landmark,
+    items: [
+      { href: '/fund', label: 'Shared Fund', icon: Landmark },
+    ]
+  },
+  {
+      title: 'Health & Info',
+      icon: HeartPulse,
+      items: [
+          { href: '/profile', label: "Harper's Profile", icon: Heart },
+          { href: '/family-tree', label: 'Family Tree', icon: Users },
+          { href: '/emergency', label: 'Emergency', icon: AlertTriangle },
+      ]
+  },
+  {
+      title: 'Legal & Evidence',
+      icon: Gavel,
+      items: [
+          { href: '/evidence-log', label: 'Evidence Log', icon: FileClock },
+          { href: '/evidence-ai', label: 'Evidence AI', icon: ScanLine },
+          { href: '/document-analyzer', label: 'Document Analyzer', icon: FileSearch },
+          { href: '/schedule-optimizer', label: 'Schedule Optimizer', icon: Wand2 },
+          { href: '/documents', label: 'Documents', icon: FileText },
+      ]
+  },
+    {
+    title: 'Communication',
+    icon: MessagesSquare,
+    items: [
+      { href: '/communication', label: 'Communication', icon: MessagesSquare },
+    ]
+  },
 ];
 
 export function SidebarNav() {
   const pathname = usePathname();
+  const [openGroups, setOpenGroups] = useState<string[]>(() => {
+    const activeGroup = navGroups.find(group => group.items.some(item => item.href === pathname));
+    return activeGroup ? [activeGroup.title] : [];
+  });
+
+  const toggleGroup = (title: string) => {
+    setOpenGroups(prev => prev.includes(title) ? prev.filter(t => t !== title) : [...prev, title]);
+  }
 
   return (
     <SidebarMenu>
-      {navItems.map((item) => (
-        <SidebarMenuItem key={item.href}>
-          <SidebarMenuButton asChild isActive={pathname === item.href} tooltip={item.label}>
-            <Link href={item.href}>
-              <item.icon />
-              <span>{item.label}</span>
-            </Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
+      {navGroups.map((group) => (
+        <Collapsible key={group.title} open={openGroups.includes(group.title)} onOpenChange={() => toggleGroup(group.title)}>
+            <SidebarMenuItem>
+                <CollapsibleTrigger asChild>
+                    <SidebarMenuButton className="justify-between">
+                        <div className="flex items-center gap-2">
+                            <group.icon />
+                            <span>{group.title}</span>
+                        </div>
+                        <ChevronDown className={cn("transition-transform", openGroups.includes(group.title) && "rotate-180")} />
+                    </SidebarMenuButton>
+                </CollapsibleTrigger>
+            </SidebarMenuItem>
+
+            <CollapsibleContent>
+                <div className="pl-6 py-1 space-y-1 border-l ml-4">
+                    {group.items.map((item) => (
+                        <SidebarMenuItem key={item.href}>
+                            <SidebarMenuButton asChild isActive={pathname === item.href} tooltip={item.label}>
+                                <Link href={item.href}>
+                                    <item.icon />
+                                    <span>{item.label}</span>
+                                </Link>
+                            </SidebarMenuButton>
+                        </SidebarMenuItem>
+                    ))}
+                </div>
+            </CollapsibleContent>
+        </Collapsible>
       ))}
     </SidebarMenu>
   );
