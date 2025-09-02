@@ -16,7 +16,6 @@ import { CalendarIcon, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
-import type { Metadata } from 'next';
 
 const formSchema = z.object({
   name: z.string().min(1, 'Name is required.'),
