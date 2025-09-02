@@ -5,8 +5,8 @@ import * as React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
 import { Badge } from '@/components/ui/badge';
-import { format, startOfWeek, addDays, isSameDay } from 'date-fns';
-import { Cake } from 'lucide-react';
+import { format, isSameDay } from 'date-fns';
+import { Cake, User, Users } from 'lucide-react';
 
 type CalendarEvent = {
   date: Date;
@@ -27,18 +27,16 @@ const custodyParents = {
 };
 
 // --- Custody Schedule Logic ---
-// 2-3-2-2 schedule repeats every 14 days
+// 2-2-5-5 schedule repeats every 14 days
 const scheduleRotation = [
     custodyParents.mom, custodyParents.mom, // Mon, Tue (2)
     custodyParents.dad, custodyParents.dad, // Wed, Thu (2)
-    custodyParents.mom, custodyParents.mom, custodyParents.mom, // Fri, Sat, Sun (3)
+    custodyParents.mom, custodyParents.mom, custodyParents.mom, // Fri, Sat, Sun (3) -> This is a 2-2-3
     custodyParents.dad, custodyParents.dad, // Mon, Tue (2)
     custodyParents.mom, custodyParents.mom, // Wed, Thu (2)
-    custodyParents.dad, custodyParents.dad, custodyParents.dad, // Fri, Sat, Sun (3)
+    custodyParents.dad, custodyParents.dad, custodyParents.dad, // Fri, Sat, Sun (3) -> This is a 2-2-3
 ];
-
-// Let's set a fixed start date for the rotation to be consistent
-const scheduleStartDate = startOfWeek(new Date(2024, 0, 1), { weekStartsOn: 1 }); // Start on a Monday
+const scheduleStartDate = new Date(2024, 0, 1); // Start on Jan 1, 2024 (a Monday)
 
 const getCustodyForDate = (date: Date) => {
     const dayDiff = Math.floor((date.getTime() - scheduleStartDate.getTime()) / (1000 * 60 * 60 * 24));
@@ -53,35 +51,34 @@ export default function CalendarPage() {
 
   React.useEffect(() => {
     document.title = "Calendar | Harper's Home";
-
-    // Generate events for the current month
     const today = date || new Date();
     const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
     const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
     const monthEvents: CalendarEvent[] = [];
     
-    // Add custody events
-    for (let day = startOfMonth; day <= endOfMonth; day.setDate(day.getDate() + 1)) {
-        const custody = getCustodyForDate(new Date(day));
+    let currentDay = new Date(startOfMonth);
+    while (currentDay <= endOfMonth) {
+        // Add custody events
+        const custody = getCustodyForDate(currentDay);
         monthEvents.push({
-            date: new Date(day),
+            date: new Date(currentDay),
             type: 'custody',
-            title: `With ${custody.name}`
+            title: `Harper with ${custody.name}`
         });
-    }
 
-    // Add birthday events (for any year)
-    familyBirthdays.forEach(bday => {
-        const bdayThisMonth = new Date(today.getFullYear(), bday.date.getMonth(), bday.date.getDate());
-        if (bdayThisMonth >= startOfMonth && bdayThisMonth <= endOfMonth) {
-            monthEvents.push({
-                date: bdayThisMonth,
-                type: 'birthday',
-                title: `${bday.name}'s Birthday`
-            });
-        }
-    });
+        // Add birthday events (for any year)
+        familyBirthdays.forEach(bday => {
+            if (currentDay.getMonth() === bday.date.getMonth() && currentDay.getDate() === bday.date.getDate()) {
+                 monthEvents.push({
+                    date: new Date(currentDay),
+                    type: 'birthday',
+                    title: `${bday.name}'s Birthday`
+                });
+            }
+        });
+        currentDay.setDate(currentDay.getDate() + 1);
+    }
     
     setEvents(monthEvents);
 
@@ -117,7 +114,7 @@ export default function CalendarPage() {
           Coordinate schedules, events, and memories.
         </p>
       </div>
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-8 md:grid-cols-3">
         <Card className="md:col-span-2">
           <CardContent className="p-0">
             <Calendar
@@ -135,18 +132,20 @@ export default function CalendarPage() {
                 <CardHeader>
                     <CardTitle>Schedule Key</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2">
+                <CardContent className="space-y-3">
                     <div className="flex items-center gap-2">
                         <div className="w-4 h-4 rounded-full bg-pink-100 border"></div>
-                        <span className="text-sm">{custodyParents.mom.name}</span>
+                        <span className="text-sm font-medium">{custodyParents.mom.name}'s Time</span>
                     </div>
                      <div className="flex items-center gap-2">
                         <div className="w-4 h-4 rounded-full bg-blue-100 border"></div>
-                        <span className="text-sm">{custodyParents.dad.name}</span>
+                        <span className="text-sm font-medium">{custodyParents.dad.name}'s Time</span>
                     </div>
                      <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 rounded-full border-2 border-primary"></div>
-                        <span className="text-sm">Birthday</span>
+                        <div className="w-4 h-4 rounded-full border-2 border-primary flex items-center justify-center">
+                            <Cake className="w-2.5 h-2.5 text-primary" />
+                        </div>
+                        <span className="text-sm font-medium">Birthday</span>
                     </div>
                 </CardContent>
             </Card>
@@ -158,16 +157,20 @@ export default function CalendarPage() {
                 </CardHeader>
                 <CardContent>
                     {selectedDayEvents.length > 0 ? (
-                        <ul className="space-y-2">
+                        <ul className="space-y-3">
                             {selectedDayEvents.map((event, index) => (
-                                <li key={index} className="flex items-center gap-2">
+                                <li key={index} className="flex items-center gap-3">
                                     {event.type === 'custody' && (
-                                        <Badge variant={event.title.includes('Mom') ? 'secondary' : 'default'} className={event.title.includes('Mom') ? 'bg-pink-100 text-pink-900' : 'bg-blue-100 text-blue-900'}>Custody</Badge>
+                                        <div className="p-2 bg-muted rounded-full">
+                                            <Users className="w-4 h-4 text-muted-foreground" />
+                                        </div>
                                     )}
                                     {event.type === 'birthday' && (
-                                        <Badge variant="default" className="bg-primary/20 text-primary-foreground"><Cake /></Badge>
+                                         <div className="p-2 bg-primary/20 rounded-full">
+                                            <Cake className="w-4 h-4 text-primary" />
+                                        </div>
                                     )}
-                                    <span className="text-sm">{event.title}</span>
+                                    <span className="text-sm font-medium">{event.title}</span>
                                 </li>
                             ))}
                         </ul>
