@@ -8,7 +8,6 @@ import { z } from 'zod';
 import { format } from 'date-fns';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Trophy, Stethoscope, Ruler, PlusCircle, CalendarIcon } from 'lucide-react';
-import type { Metadata } from 'next';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -27,32 +26,33 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const milestoneSchema = z.object({
-  icon: z.enum(['Trophy', 'Stethoscope', 'Ruler']),
   title: z.string().min(1, 'Title is required.'),
   date: z.date(),
   description: z.string().min(1, 'Description is required.'),
+  category: z.enum(['Achievement', 'Health', 'Growth']),
 });
 
 type Milestone = z.infer<typeof milestoneSchema>;
 
 const initialMilestones: Milestone[] = [
-    { icon: 'Trophy', title: "First Steps", date: new Date("2022-06-05"), description: "Harper took her first unassisted steps today!" },
-    { icon: 'Stethoscope', title: "Annual Check-up", date: new Date("2023-08-20"), description: "Everything looks great. Next appointment in one year." },
-    { icon: 'Ruler', title: "Height: 45 inches", date: new Date("2023-08-20"), description: "Grew 2 inches since last year." },
-    { icon: 'Trophy', title: "Learned to Ride a Bike", date: new Date("2023-09-10"), description: "Rode without training wheels for the first time at the park." },
+    { category: 'Achievement', title: "First Steps", date: new Date("2022-06-05"), description: "Harper took her first unassisted steps today!" },
+    { category: 'Health', title: "Annual Check-up", date: new Date("2023-08-20"), description: "Everything looks great. Next appointment in one year." },
+    { category: 'Growth', title: "Height: 45 inches", date: new Date("2023-08-20"), description: "Grew 2 inches since last year." },
+    { category: 'Achievement', title: "Learned to Ride a Bike", date: new Date("2023-09-10"), description: "Rode without training wheels for the first time at the park." },
 ];
 
-const iconMap = {
-    Trophy: Trophy,
-    Stethoscope: Stethoscope,
-    Ruler: Ruler,
+const iconMap: Record<Milestone['category'], React.ElementType> = {
+    Achievement: Trophy,
+    Health: Stethoscope,
+    Growth: Ruler,
 };
 
 
 export default function MilestonesPage() {
-    const [milestones, setMilestones] = React.useState<Milestone[]>(initialMilestones);
+    const [milestones, setMilestones] = React.useState<Milestone[]>(initialMilestones.sort((a,b) => b.date.getTime() - a.date.getTime()));
     const [isDialogOpen, setIsDialogOpen] = React.useState(false);
     const { toast } = useToast();
 
@@ -61,7 +61,7 @@ export default function MilestonesPage() {
         defaultValues: {
             title: '',
             description: '',
-            icon: 'Trophy',
+            category: 'Achievement',
             date: new Date(),
         },
     });
@@ -155,6 +155,28 @@ export default function MilestonesPage() {
                 />
                  <FormField
                   control={form.control}
+                  name="category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Category</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a category" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Achievement">Achievement</SelectItem>
+                          <SelectItem value="Health">Health</SelectItem>
+                          <SelectItem value="Growth">Growth</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                 <FormField
+                  control={form.control}
                   name="description"
                   render={({ field }) => (
                     <FormItem>
@@ -179,7 +201,7 @@ export default function MilestonesPage() {
       </div>
        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {milestones.map((milestone, index) => {
-            const IconComponent = iconMap[milestone.icon];
+            const IconComponent = iconMap[milestone.category];
             return (
                 <Card key={index}>
                     <CardHeader>
@@ -188,8 +210,8 @@ export default function MilestonesPage() {
                                 <CardTitle>{milestone.title}</CardTitle>
                                 <CardDescription>{format(milestone.date, 'PPP')}</CardDescription>
                             </div>
-                            <div className="p-3 bg-accent/50 rounded-lg">
-                                <IconComponent className="w-5 h-5 text-accent-foreground" />
+                            <div className="p-3 bg-primary/10 rounded-lg">
+                                <IconComponent className="w-5 h-5 text-primary" />
                             </div>
                         </div>
                     </CardHeader>
