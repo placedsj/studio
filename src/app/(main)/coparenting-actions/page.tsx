@@ -1,7 +1,7 @@
 // src/app/(main)/coparenting-actions/page.tsx
 'use client';
 
-import *d from 'react';
+import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
@@ -10,9 +10,9 @@ import { Loader2, Wand2, Sparkles } from 'lucide-react';
 import { coParentingActions, CoParentingActionsOutput } from '@/ai/flows/co-parenting-actions';
 
 export default function CoParentingActionsPage() {
-  const [message, setMessage] = d.useState("I was hoping to take Harper on a small trip next month, maybe from the 14th to the 16th. Would you be open to swapping weekends?");
-  const [isLoading, setIsLoading] = d.useState(false);
-  const [result, setResult] = d.useState<CoParentingActionsOutput | null>(null);
+  const [message, setMessage] = React.useState("I was hoping to take Harper on a small trip next month, maybe from the 14th to the 16th. Would you be open to swapping weekends?");
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [result, setResult] = React.useState<CoParentingActionsOutput | null>(null);
   const { toast } = useToast();
 
   const handleAnalyze = async () => {
