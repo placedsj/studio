@@ -7,8 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Wand2, ArrowRight } from 'lucide-react';
-import type { Metadata } from 'next';
+import { Loader2, Wand2 } from 'lucide-react';
 import { improveCommunication, ImproveCommunicationOutput } from '@/ai/flows/improve-communication';
 
 export default function CommunicationPage() {
@@ -52,7 +51,7 @@ export default function CommunicationPage() {
           Craft clear, positive, and child-focused messages with AI assistance.
         </p>
       </div>
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-8 lg:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>Compose Message</CardTitle>
@@ -60,12 +59,12 @@ export default function CommunicationPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <Textarea
-              rows={10}
+              rows={12}
               placeholder="Type your message here..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
-            <Button onClick={handleAnalyze} disabled={isLoading}>
+            <Button onClick={handleAnalyze} disabled={isLoading || !message} size="lg" className="w-full">
               {isLoading ? <Loader2 className="animate-spin" /> : <Wand2 />}
               <span>Analyze & Suggest</span>
             </Button>
@@ -78,29 +77,34 @@ export default function CommunicationPage() {
           </CardHeader>
           <CardContent>
             {isLoading && (
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Loader2 className="animate-spin" />
-                <span>Analyzing...</span>
+              <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+                <Loader2 className="animate-spin h-8 w-8 mb-2" />
+                <p>Analyzing your message...</p>
               </div>
             )}
             {!result && !isLoading && (
-              <div className="text-center text-muted-foreground">
-                <p>Your suggestions will appear here.</p>
+              <div className="text-center text-muted-foreground py-10">
+                 <Wand2 className="mx-auto h-12 w-12" />
+                <p className="mt-2 font-semibold">Your suggestions will appear here.</p>
+                <p className="text-sm">Write a message and click analyze to get started.</p>
               </div>
             )}
             {result && (
               <div className="space-y-6">
                 <div>
                   <h3 className="font-semibold mb-2">Revised Message</h3>
-                  <div className="p-4 bg-muted rounded-md text-sm">
+                  <div className="p-4 bg-muted rounded-md text-sm leading-relaxed">
                     <p>{result.revisedMessage}</p>
                   </div>
                 </div>
                 <div>
                   <h3 className="font-semibold mb-2">Key Changes & Reasoning</h3>
-                  <ul className="list-disc list-inside space-y-2 text-sm">
+                  <ul className="space-y-3 text-sm">
                     {result.keyChanges.map((change, index) => (
-                      <li key={index}>{change}</li>
+                      <li key={index} className="flex items-start gap-3">
+                        <span className="text-primary mt-1">&rarr;</span>
+                        <span>{change}</span>
+                      </li>
                     ))}
                   </ul>
                 </div>
