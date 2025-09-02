@@ -31,7 +31,8 @@ export default function ProfilePage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "Harper June",
+      name: "Harper Ryan",
+      dob: new Date("2024-11-12"),
     },
   });
 

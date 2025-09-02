@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { Home, Calendar, BookHeart, Landmark, TrendingUp, FileText, Baby, Heart, AlertTriangle } from 'lucide-react';
+import { Home, Calendar, BookHeart, Landmark, TrendingUp, FileText, Baby, Heart, AlertTriangle, Users } from 'lucide-react';
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import Link from 'next/link';
 
@@ -14,6 +14,7 @@ const navItems = [
   { href: '/documents', label: 'Documents', icon: FileText },
   { href: '/log', label: "Harper's Log", icon: Baby },
   { href: '/profile', label: "Harper's Profile", icon: Heart },
+  { href: '/family-tree', label: 'Family Tree', icon: Users },
   { href: '/emergency', label: 'Emergency', icon: AlertTriangle },
 ];
 
