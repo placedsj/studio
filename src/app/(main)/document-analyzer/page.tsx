@@ -34,7 +34,7 @@ export default function DocumentAnalyzerPage() {
     try {
       const output = await processEvidenceText({ textContent: text });
       setResult(output);
-    } catch (error)
+    } catch (error) {
       console.error('Error processing evidence text:', error);
       toast({
         variant: 'destructive',
