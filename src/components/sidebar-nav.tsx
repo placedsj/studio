@@ -4,7 +4,7 @@
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import {
-    Home, Calendar, BookHeart, Landmark, TrendingUp, FileText, Baby, Heart, AlertTriangle, Users, MessagesSquare, Wand2, FileClock, ScanLine, FileSearch, ChevronDown, LayoutDashboard, HeartPulse, Gavel, Sparkles
+    Home, Calendar, BookHeart, Landmark, TrendingUp, Baby, Heart, AlertTriangle, Users, MessagesSquare, ScanLine, FileSearch, ChevronDown, LayoutDashboard, HeartPulse, Gavel, FileClock
 } from 'lucide-react';
 import {
     SidebarMenu,
@@ -50,8 +50,6 @@ const navGroups = [
           { href: '/evidence-log', label: 'Evidence Log', icon: FileClock },
           { href: '/evidence-ai', label: 'Evidence AI', icon: ScanLine },
           { href: '/document-analyzer', label: 'Document Analyzer', icon: FileSearch },
-          { href: '/schedule-optimizer', label: 'Schedule Optimizer', icon: Wand2 },
-          { href: '/documents', label: 'Documents', icon: FileText },
       ]
   },
     {
