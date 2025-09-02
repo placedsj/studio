@@ -41,6 +41,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await updateProfile(userCredential.user, {
         displayName: `${firstName} ${lastName}`
     });
+    // Manually update the user state so the UI reflects the new display name
+    setUser(auth.currentUser); 
     router.push('/dashboard');
     return userCredential;
   };

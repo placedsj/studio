@@ -1,15 +1,14 @@
 // src/lib/firebase.ts
-import { initializeApp, getApps, getApp } from "firebase/app";
+import { initializeApp, getApps, getApp, FirebaseOptions } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
-const firebaseConfig = {
-  projectId: "familyverse-yt5vs",
-  appId: "1:1040928765696:web:ea81880e7141b69a60e5e5",
-  storageBucket: "familyverse-yt5vs.firebasestorage.app",
-  apiKey: "AIzaSyAUeaWDzhP3shXUzyKsucnnN_78TUZbn7w",
-  authDomain: "familyverse-yt5vs.firebaseapp.com",
-  measurementId: "",
-  messagingSenderId: "1040928765696"
+const firebaseConfig: FirebaseOptions = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
 // Initialize Firebase
