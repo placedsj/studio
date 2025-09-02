@@ -2,7 +2,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { Home, Calendar, BookHeart, Landmark, TrendingUp, FileText, Baby, Heart, AlertTriangle, Users, MessagesSquare } from 'lucide-react';
+import { Home, Calendar, BookHeart, Landmark, TrendingUp, FileText, Baby, Heart, AlertTriangle, Users, MessagesSquare, Wand2 } from 'lucide-react';
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import Link from 'next/link';
 
@@ -18,6 +18,7 @@ const navItems = [
   { href: '/profile', label: "Harper's Profile", icon: Heart },
   { href: '/family-tree', label: 'Family Tree', icon: Users },
   { href: '/emergency', label: 'Emergency', icon: AlertTriangle },
+  { href: '/schedule-optimizer', label: 'Schedule Optimizer', icon: Wand2 },
 ];
 
 export function SidebarNav() {
