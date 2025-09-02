@@ -1,7 +1,7 @@
 // src/app/(main)/dashboard/page.tsx
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { BookHeart, Calendar, FileText, Landmark, TrendingUp } from 'lucide-react';
+import { BookHeart, Calendar, FileClock, Landmark, MessagesSquare, TrendingUp } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
@@ -14,7 +14,8 @@ const quickLinks = [
     { href: "/journal", icon: BookHeart, title: "Family Journal", description: "Share precious moments." },
     { href: "/fund", icon: Landmark, title: "Shared Fund", description: "Manage shared expenses." },
     { href: "/milestones", icon: TrendingUp, title: "Milestones", description: "Track developmental progress." },
-    { href: "/documents", icon: FileText, title: "Secure Documents", description: "Store important files safely." },
+    { href: "/evidence-log", icon: FileClock, title: "Evidence Log", description: "Record important events." },
+    { href: "/communication", icon: MessagesSquare, title: "Communication Hub", description: "Message the other parent." },
 ];
 
 export default function DashboardPage() {
