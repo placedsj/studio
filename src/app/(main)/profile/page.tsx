@@ -11,6 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CalendarIcon, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
@@ -22,6 +23,11 @@ const formSchema = z.object({
   dob: z.date({
     required_error: "A date of birth is required.",
   }),
+  weightLb: z.coerce.number().optional(),
+  weightOz: z.coerce.number().optional(),
+  height: z.coerce.number().optional(),
+  eyeColor: z.string().optional(),
+  hairColor: z.string().optional(),
 });
 
 export default function ProfilePage() {
@@ -33,6 +39,11 @@ export default function ProfilePage() {
     defaultValues: {
       name: "Harper Ryan",
       dob: new Date("2024-11-12"),
+      weightLb: 8,
+      weightOz: 4,
+      height: 20,
+      eyeColor: "Blue",
+      hairColor: "Blonde",
     },
   });
 
@@ -118,6 +129,101 @@ export default function ProfilePage() {
                   </FormItem>
                 )}
               />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormItem>
+                  <FormLabel>Weight</FormLabel>
+                  <div className="flex gap-2">
+                    <FormField
+                      control={form.control}
+                      name="weightLb"
+                      render={({ field }) => (
+                        <FormControl>
+                          <div className="relative">
+                            <Input type="number" placeholder="lbs" {...field} />
+                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">lbs</span>
+                          </div>
+                        </FormControl>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="weightOz"
+                      render={({ field }) => (
+                         <FormControl>
+                          <div className="relative">
+                            <Input type="number" placeholder="oz" {...field} />
+                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">oz</span>
+                          </div>
+                        </FormControl>
+                      )}
+                    />
+                  </div>
+                </FormItem>
+                 <FormField
+                  control={form.control}
+                  name="height"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Height</FormLabel>
+                       <FormControl>
+                          <div className="relative">
+                            <Input type="number" placeholder="inches" {...field} />
+                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">in</span>
+                          </div>
+                        </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 <FormField
+                  control={form.control}
+                  name="eyeColor"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Eye Color</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select eye color" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Blue">Blue</SelectItem>
+                          <SelectItem value="Brown">Brown</SelectItem>
+                          <SelectItem value="Green">Green</SelectItem>
+                          <SelectItem value="Hazel">Hazel</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                 <FormField
+                  control={form.control}
+                  name="hairColor"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Hair Color</FormLabel>
+                       <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select hair color" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Blonde">Blonde</SelectItem>
+                          <SelectItem value="Brown">Brown</SelectItem>
+                          <SelectItem value="Black">Black</SelectItem>
+                          <SelectItem value="Red">Red</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               <Button type="submit" disabled={isLoading}>
                 {isLoading && <Loader2 className="animate-spin" />}
                 <span>Save Changes</span>
