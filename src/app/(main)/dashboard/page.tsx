@@ -4,9 +4,10 @@ import { Separator } from '@/components/ui/separator';
 import { BookHeart, Calendar, FileClock, Landmark, MessagesSquare, TrendingUp } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export const metadata: Metadata = {
-  title: "Dashboard | Harper's Home",
+  title: "Dashboard | FamilyVerse",
 };
 
 const quickLinks = [
@@ -62,7 +63,7 @@ export default function DashboardPage() {
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
-                        <img src="https://picsum.photos/400/200" data-ai-hint="soccer goal" alt="Harper's First Soccer Goal!" className="rounded-lg object-cover w-full aspect-video" />
+                        <Image src="https://picsum.photos/400/200" data-ai-hint="soccer goal" alt="Harper's First Soccer Goal!" width={400} height={200} className="rounded-lg object-cover w-full aspect-video" />
                         <div className="space-y-1">
                              <h3 className="font-semibold">Harper's First Soccer Goal!</h3>
                              <p className="text-sm text-muted-foreground">So proud of Harper today! She scored her very first goal...</p>
