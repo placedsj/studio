@@ -58,9 +58,7 @@ const navGroups = [
     title: 'Communication',
     icon: MessagesSquare,
     items: [
-      { href: '/messaging', label: 'Messaging', icon: MessagesSquare },
-      { href: '/communication', label: 'Communication Coach', icon: Wand2 },
-      { href: '/coparenting-actions', label: 'Co-parenting Actions', icon: Sparkles },
+      { href: '/communication', label: 'Communication Hub', icon: MessagesSquare },
     ]
   },
 ];

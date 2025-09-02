@@ -4,9 +4,10 @@
 import * as React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
-import { Badge } from '@/components/ui/badge';
 import { format, isSameDay } from 'date-fns';
-import { Cake, User, Users } from 'lucide-react';
+import { Cake, Users, Handshake } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 
 type CalendarEvent = {
   date: Date;
@@ -48,6 +49,7 @@ const getCustodyForDate = (date: Date) => {
 export default function CalendarPage() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [events, setEvents] = React.useState<CalendarEvent[]>([]);
+  const router = useRouter();
 
   React.useEffect(() => {
     document.title = "Calendar | Harper's Home";
@@ -83,6 +85,15 @@ export default function CalendarPage() {
     setEvents(monthEvents);
 
   }, [date]);
+
+  const handleRequestChange = () => {
+    if (!date) return;
+    const formattedDate = format(date, "MMMM do");
+    const message = `I'd like to request a change for our schedule on ${formattedDate}. Would you be open to discussing it?`;
+    // URL encode the message to pass it as a query parameter
+    const encodedMessage = encodeURIComponent(message);
+    router.push(`/communication?draft=${encodedMessage}`);
+  };
 
   const custodyModifiers = {
       mom: (day: Date) => getCustodyForDate(day) === custodyParents.mom,
@@ -178,6 +189,14 @@ export default function CalendarPage() {
                         <p className="text-sm text-muted-foreground">No events for this day.</p>
                     )}
                 </CardContent>
+                {date && (
+                    <CardContent>
+                        <Button className="w-full" onClick={handleRequestChange}>
+                           <Handshake />
+                            <span>Request Schedule Change</span>
+                        </Button>
+                    </CardContent>
+                )}
              </Card>
         </div>
       </div>

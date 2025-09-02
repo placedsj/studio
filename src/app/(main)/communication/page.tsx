@@ -1,117 +1,203 @@
 // src/app/(main)/communication/page.tsx
 'use client';
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import * as React from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Wand2, Send, Sparkles, Loader2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Wand2 } from 'lucide-react';
-import { improveCommunication, ImproveCommunicationOutput } from '@/ai/flows/improve-communication';
+import { coParentingActions, CoParentingActionsOutput } from '@/ai/flows/co-parenting-actions';
 
-export default function CommunicationCoachPage() {
-  const [message, setMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [result, setResult] = useState<ImproveCommunicationOutput | null>(null);
-  const { toast } = useToast();
+type Message = {
+    id: number;
+    user: 'Mom' | 'Dad';
+    avatar: string;
+    initials: string;
+    text: string;
+    timestamp: string;
+    actions?: any[];
+};
 
-  const handleAnalyze = async () => {
-    if (message.trim().length < 10) {
-      toast({
-        variant: 'destructive',
-        title: 'Message too short',
-        description: 'Please enter a longer message to analyze.',
-      });
-      return;
+const initialMessages: Message[] = [
+    {
+        id: 1,
+        user: 'Dad',
+        avatar: '',
+        initials: 'D',
+        text: "Hey, just wanted to confirm you're picking up Harper from school today?",
+        timestamp: "10:30 AM"
+    },
+    {
+        id: 2,
+        user: 'Mom',
+        avatar: '',
+        initials: 'M',
+        text: "Yes, I'll be there to pick her up. She has her soccer practice afterwards, so I'll take her to that as well.",
+        timestamp: "10:32 AM"
+    },
+];
+
+
+function CommunicationPageInternal() {
+    const [messages, setMessages] = React.useState<Message[]>(initialMessages);
+    const [newMessage, setNewMessage] = React.useState('');
+    const [isLoading, setIsLoading] = React.useState(false);
+    const { toast } = useToast();
+    const searchParams = useSearchParams();
+
+    React.useEffect(() => {
+        const draftMessage = searchParams.get('draft');
+        if (draftMessage) {
+            setNewMessage(draftMessage);
+        }
+    }, [searchParams]);
+
+    const handleSendMessage = async () => {
+        if (newMessage.trim() === '') return;
+        setIsLoading(true);
+
+        const userMessage: Message = {
+            id: messages.length + 1,
+            user: 'Dad', // Assuming 'Dad' is the current user for demo
+            avatar: '',
+            initials: 'D',
+            text: newMessage,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+
+        setMessages(prev => [...prev, userMessage]);
+        setNewMessage('');
+
+        try {
+            const result = await coParentingActions({ text: userMessage.text });
+            const aiResponse: Message = {
+                id: messages.length + 2,
+                user: 'Mom', // Simulating response from the other parent / AI mediator
+                avatar: '',
+                initials: 'AI',
+                text: result.text,
+                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                actions: result.tool_requests
+            };
+            setMessages(prev => [...prev, aiResponse]);
+        } catch (error) {
+            console.error("Error with co-parenting actions:", error);
+            toast({
+                variant: 'destructive',
+                title: 'AI Mediator Error',
+                description: 'Could not get a response from the AI mediator.'
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    
+    const handleActionClick = (tool: string, args: any) => {
+        toast({
+            title: "Action Confirmed!",
+            description: `You've confirmed: ${args.title}`
+        });
     }
 
-    setIsLoading(true);
-    setResult(null);
-    try {
-      const output = await improveCommunication({ message });
-      setResult(output);
-    } catch (error) {
-      console.error('Error improving communication:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Analysis Failed',
-        description: 'There was an error analyzing your message. Please try again.',
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    const currentUser = 'Dad'; // For styling purposes
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold font-headline uppercase tracking-tight">COMMUNICATION COACH</h1>
-        <p className="text-muted-foreground mt-1">
-          Draft and refine messages with AI assistance before sending.
-        </p>
-      </div>
-      <div className="grid gap-8 lg:grid-cols-2">
+        <div>
+            <h1 className="text-3xl font-bold font-headline uppercase tracking-tight">COMMUNICATION HUB</h1>
+            <p className="text-muted-foreground mt-1">
+                A secure, AI-mediated channel for all co-parenting communication.
+            </p>
+        </div>
         <Card>
-          <CardHeader>
-            <CardTitle>Compose Message</CardTitle>
-            <CardDescription>Write your message below and let the AI help you refine it.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Textarea
-              rows={12}
-              placeholder="Type your message here..."
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-            />
-            <Button onClick={handleAnalyze} disabled={isLoading || !message} size="lg" className="w-full">
-              {isLoading ? <Loader2 className="animate-spin" /> : <Wand2 />}
-              <span>Analyze & Suggest</span>
-            </Button>
-          </CardContent>
-        </Card>
-        <Card className={!result && !isLoading ? 'flex items-center justify-center' : ''}>
-          <CardHeader>
-            <CardTitle>AI Suggestions</CardTitle>
-            <CardDescription>Review the AI's feedback to improve your communication.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {isLoading && (
-              <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-                <Loader2 className="animate-spin h-8 w-8 mb-2" />
-                <p>Analyzing your message...</p>
-              </div>
-            )}
-            {!result && !isLoading && (
-              <div className="text-center text-muted-foreground py-10">
-                 <Wand2 className="mx-auto h-12 w-12" />
-                <p className="mt-2 font-semibold">Your suggestions will appear here.</p>
-                <p className="text-sm">Write a message and click analyze to get started.</p>
-              </div>
-            )}
-            {result && (
-              <div className="space-y-6">
-                <div>
-                  <h3 className="font-semibold mb-2">Revised Message</h3>
-                  <div className="p-4 bg-muted rounded-md text-sm leading-relaxed">
-                    <p>{result.revisedMessage}</p>
-                  </div>
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-2">Key Changes & Reasoning</h3>
-                  <ul className="space-y-3 text-sm">
-                    {result.keyChanges.map((change, index) => (
-                      <li key={index} className="flex items-start gap-3">
-                        <span className="text-primary mt-1">&rarr;</span>
-                        <span>{change}</span>
-                      </li>
+            <CardHeader>
+                <CardTitle>Conversation with Mom</CardTitle>
+                <CardDescription>All messages are timestamped and analyzed by the AI Mediator to suggest actions.</CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col h-[65vh]">
+                <div className="flex-grow space-y-6 overflow-y-auto p-4 border rounded-md bg-muted/20">
+                    {messages.map(msg => (
+                        <div key={msg.id}>
+                            <div className={cn(
+                                "flex items-end gap-3",
+                                msg.user === currentUser ? "justify-end" : "justify-start"
+                            )}>
+                                 {msg.user !== currentUser && (
+                                    <Avatar className="h-8 w-8">
+                                        <AvatarFallback>{msg.initials}</AvatarFallback>
+                                    </Avatar>
+                                 )}
+                                 <div className={cn(
+                                    "max-w-xs md:max-w-md lg:max-w-lg p-3 rounded-lg",
+                                    msg.user === currentUser ? "bg-primary text-primary-foreground" : (msg.initials === 'AI' ? "bg-accent text-accent-foreground" : "bg-muted")
+                                 )}>
+                                    <p className="text-sm">{msg.text}</p>
+                                    <p className="text-xs mt-1 text-right opacity-70">{msg.timestamp}</p>
+                                 </div>
+                                 {msg.user === currentUser && (
+                                    <Avatar className="h-8 w-8">
+                                        <AvatarFallback>{msg.initials}</AvatarFallback>
+                                    </Avatar>
+                                 )}
+                            </div>
+                            {msg.actions && msg.actions.length > 0 && (
+                                <div className="flex justify-start mt-2">
+                                    <div className="ml-11 p-2 bg-muted rounded-md space-y-2">
+                                        <p className="text-xs font-semibold flex items-center gap-1"><Sparkles className="w-3 h-3 text-primary" /> Suggested Actions</p>
+                                        <div className="flex flex-wrap gap-2">
+                                            {msg.actions.map((tool, index) => (
+                                                <Button key={index} size="sm" variant="outline" onClick={() => handleActionClick(tool.name, tool.args)}>
+                                                    {tool.args.title}
+                                                </Button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     ))}
-                  </ul>
+                     {isLoading && (
+                        <div className="flex items-end gap-3 justify-start">
+                             <Avatar className="h-8 w-8">
+                                <AvatarFallback>AI</AvatarFallback>
+                            </Avatar>
+                            <div className="max-w-xs md:max-w-md lg:max-w-lg p-3 rounded-lg bg-accent text-accent-foreground">
+                                <div className="flex items-center gap-2">
+                                    <Loader2 className="animate-spin h-4 w-4" />
+                                    <p className="text-sm">Thinking...</p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
-              </div>
-            )}
-          </CardContent>
+                <div className="mt-4 flex items-center gap-2">
+                    <Input 
+                        placeholder="Type your message..."
+                        className="flex-grow"
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && !isLoading && handleSendMessage()}
+                        disabled={isLoading}
+                    />
+                    <Button size="icon" onClick={handleSendMessage} aria-label="Send Message" disabled={isLoading}>
+                        <Send />
+                    </Button>
+                </div>
+            </CardContent>
         </Card>
-      </div>
     </div>
   );
+}
+
+// Wrap the component in a Suspense boundary to use useSearchParams
+export default function CommunicationPage() {
+    return (
+        <React.Suspense fallback={<div>Loading...</div>}>
+            <CommunicationPageInternal />
+        </React.Suspense>
+    );
 }
