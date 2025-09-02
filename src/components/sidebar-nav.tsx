@@ -58,7 +58,8 @@ const navGroups = [
     title: 'Communication',
     icon: MessagesSquare,
     items: [
-      { href: '/communication', label: 'Communication', icon: MessagesSquare },
+      { href: '/messaging', label: 'Messaging', icon: MessagesSquare },
+      { href: '/communication', label: 'Communication Coach', icon: Wand2 },
     ]
   },
 ];
@@ -67,7 +68,7 @@ export function SidebarNav() {
   const pathname = usePathname();
   const [openGroups, setOpenGroups] = useState<string[]>(() => {
     const activeGroup = navGroups.find(group => group.items.some(item => item.href === pathname));
-    return activeGroup ? [activeGroup.title] : [];
+    return activeGroup ? [activeGroup.title] : ['Daily', 'Communication'];
   });
 
   const toggleGroup = (title: string) => {

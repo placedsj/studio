@@ -1,4 +1,3 @@
-
 // src/app/(main)/communication/page.tsx
 'use client';
 
@@ -10,7 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, Wand2 } from 'lucide-react';
 import { improveCommunication, ImproveCommunicationOutput } from '@/ai/flows/improve-communication';
 
-export default function CommunicationPage() {
+export default function CommunicationCoachPage() {
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<ImproveCommunicationOutput | null>(null);
@@ -46,9 +45,9 @@ export default function CommunicationPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold font-headline uppercase tracking-tight">Communication Center</h1>
+        <h1 className="text-3xl font-bold font-headline uppercase tracking-tight">COMMUNICATION COACH</h1>
         <p className="text-muted-foreground mt-1">
-          Craft clear, positive, and child-focused messages with AI assistance.
+          Draft and refine messages with AI assistance before sending.
         </p>
       </div>
       <div className="grid gap-8 lg:grid-cols-2">
