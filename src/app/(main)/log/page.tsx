@@ -57,7 +57,7 @@ export default function LogPage() {
     const form = useForm<z.infer<typeof logSchema>>({
         resolver: zodResolver(logSchema),
         defaultValues: {
-            time: format(new Date(), 'hh:mm a'),
+            time: format(new Date(), 'HH:mm'),
             type: 'Feeding',
             details: '',
         },
@@ -74,7 +74,7 @@ export default function LogPage() {
             description: `Successfully added "${values.type}" log.`,
         });
         form.reset({
-             time: format(new Date(), 'hh:mm a'),
+             time: format(new Date(), 'HH:mm'),
              type: 'Feeding',
              details: '',
         });
@@ -183,7 +183,7 @@ export default function LogPage() {
                         <TableBody>
                             {logs.map((log, index) => (
                                 <TableRow key={index}>
-                                    <TableCell className="font-medium">{log.time}</TableCell>
+                                    <TableCell className="font-medium">{format(new Date(`1970-01-01T${log.time}`), 'p')}</TableCell>
                                     <TableCell>
                                         <div className="flex items-center gap-2">
                                             <log.icon className="w-4 h-4 text-muted-foreground" />
