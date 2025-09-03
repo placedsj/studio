@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
+import { CoParentingTip } from "@/components/co-parenting-tip";
 
 export default function AppLayout({
   children,
@@ -82,6 +83,9 @@ export default function AppLayout({
       <SidebarInset>
         <main className="p-4 sm:p-6 lg:p-8 bg-background min-h-screen">
           {children}
+          <div className="mt-12">
+            <CoParentingTip />
+          </div>
         </main>
       </SidebarInset>
     </SidebarProvider>
