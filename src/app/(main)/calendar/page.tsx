@@ -28,14 +28,14 @@ const custodyParents = {
 };
 
 // --- Custody Schedule Logic ---
-// 2-2-5-5 schedule repeats every 14 days
+// 2-2-3 schedule repeats every 14 days (Week 1: Mom M/T, Dad W/Th, Mom F/S/S. Week 2: Dad M/T, Mom W/Th, Dad F/S/S)
 const scheduleRotation = [
     custodyParents.mom, custodyParents.mom, // Mon, Tue (2)
     custodyParents.dad, custodyParents.dad, // Wed, Thu (2)
-    custodyParents.mom, custodyParents.mom, custodyParents.mom, // Fri, Sat, Sun (3) -> This is a 2-2-3
+    custodyParents.mom, custodyParents.mom, custodyParents.mom, // Fri, Sat, Sun (3)
     custodyParents.dad, custodyParents.dad, // Mon, Tue (2)
     custodyParents.mom, custodyParents.mom, // Wed, Thu (2)
-    custodyParents.dad, custodyParents.dad, custodyParents.dad, // Fri, Sat, Sun (3) -> This is a 2-2-3
+    custodyParents.dad, custodyParents.dad, custodyParents.dad, // Fri, Sat, Sun (3)
 ];
 const scheduleStartDate = new Date(2024, 0, 1); // Start on Jan 1, 2024 (a Monday)
 

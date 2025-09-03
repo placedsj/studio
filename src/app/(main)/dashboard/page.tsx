@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { format, addDays } from 'date-fns';
 
 export const metadata: Metadata = {
-  title: "Dashboard | FamilyVerse",
+  title: "Dashboard | Harper's Home",
 };
 
 const quickLinks = [
