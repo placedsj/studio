@@ -4,7 +4,7 @@
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import {
-    Home, Calendar, BookHeart, Landmark, TrendingUp, Baby, Heart, AlertTriangle, Users, MessagesSquare, ScanLine, FileSearch, ChevronDown, LayoutDashboard, HeartPulse, Gavel, FileClock
+    Home, Calendar, BookHeart, Landmark, TrendingUp, Baby, Heart, AlertTriangle, Users, MessagesSquare, ScanLine, FileSearch, ChevronDown, LayoutDashboard, HeartPulse, Gavel, FileClock, Wand2
 } from 'lucide-react';
 import {
     SidebarMenu,
@@ -59,13 +59,25 @@ const navGroups = [
       { href: '/communication', label: 'Communication Hub', icon: MessagesSquare },
     ]
   },
+  {
+    title: 'AI Tools',
+    icon: Wand2,
+    items: [
+        { href: '/ai-tools/schedule-optimizer', label: 'Schedule Optimizer', icon: Wand2 },
+    ]
+  }
 ];
 
 export function SidebarNav() {
   const pathname = usePathname();
   const [openGroups, setOpenGroups] = useState<string[]>(() => {
-    const activeGroup = navGroups.find(group => group.items.some(item => item.href === pathname));
-    return activeGroup ? [activeGroup.title] : ['Daily', 'Communication'];
+    const activeGroup = navGroups.find(group => group.items.some(item => pathname.startsWith(item.href)));
+    // Default open groups
+    const defaultOpen = ['Daily', 'Communication'];
+    if (activeGroup && !defaultOpen.includes(activeGroup.title)) {
+        return [...defaultOpen, activeGroup.title];
+    }
+    return defaultOpen;
   });
 
   const toggleGroup = (title: string) => {
