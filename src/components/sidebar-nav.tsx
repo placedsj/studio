@@ -39,6 +39,7 @@ const navGroups = [
       icon: HeartPulse,
       items: [
           { href: '/profile', label: "Harper's Profile", icon: Heart },
+          { href: '/health', label: 'Health Hub', icon: HeartPulse },
           { href: '/family-tree', label: 'Family Tree', icon: Users },
           { href: '/emergency', label: 'Emergency', icon: AlertTriangle },
       ]
@@ -74,7 +75,7 @@ export function SidebarNav() {
   const [openGroups, setOpenGroups] = useState<string[]>(() => {
     const activeGroup = navGroups.find(group => group.items.some(item => pathname.startsWith(item.href)));
     // Default open groups
-    const defaultOpen = ['Daily', 'Communication', 'AI Tools'];
+    const defaultOpen = ['Daily', 'Communication', 'AI Tools', 'Health & Info'];
     if (activeGroup && !defaultOpen.includes(activeGroup.title)) {
         return [...defaultOpen, activeGroup.title];
     }
