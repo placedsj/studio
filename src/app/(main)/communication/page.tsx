@@ -98,8 +98,8 @@ function CommunicationPageInternal() {
     
     const handleActionClick = (tool: string, args: any) => {
         toast({
-            title: "Action Confirmed!",
-            description: `You've confirmed: ${args.title}`
+            title: "Action Logged!",
+            description: `Your proposal '${args.title}' has been officially logged.`
         });
     }
 
@@ -146,9 +146,10 @@ function CommunicationPageInternal() {
                             </div>
                             {msg.actions && msg.actions.length > 0 && (
                                 <div className="flex justify-start mt-2">
-                                    <div className="ml-11 p-2 bg-muted rounded-md space-y-2">
-                                        <p className="text-xs font-semibold flex items-center gap-1"><Sparkles className="w-3 h-3 text-primary" /> Suggested Actions</p>
-                                        <div className="flex flex-wrap gap-2">
+                                    <div className="ml-11 p-3 bg-muted rounded-md space-y-2 border-l-4 border-primary">
+                                        <p className="text-sm font-semibold flex items-center gap-2"><Sparkles className="w-4 h-4 text-primary" /> AI Suggested Actions</p>
+                                        <p className="text-xs text-muted-foreground">The AI mediator detected an actionable item in the conversation. You can use these buttons to create a formal log entry.</p>
+                                        <div className="flex flex-wrap gap-2 pt-2">
                                             {msg.actions.map((tool, index) => (
                                                 <Button key={index} size="sm" variant="outline" onClick={() => handleActionClick(tool.name, tool.args)}>
                                                     {tool.args.title}
