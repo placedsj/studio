@@ -62,14 +62,12 @@ export default function EvidenceAiPage() {
   
   const handleAddToLog = () => {
     if (!result) return;
-    // In a real app, this would use a shared state management or context
-    // to add the event to the Evidence Log page state.
-    // For now, we can simulate it with a toast and navigation.
-    toast({
-        title: "Added to Evidence Log",
-        description: `"${result.suggestedTitle}" has been prepared for the log.`
+    const query = new URLSearchParams({
+        category: result.suggestedCategory,
+        description: result.summary,
+        evidence: `AI analysis of uploaded image: "${result.suggestedTitle}"`,
     });
-    router.push('/evidence-log');
+    router.push(`/evidence-log?${query.toString()}`);
   };
 
   const triggerFileSelect = () => {

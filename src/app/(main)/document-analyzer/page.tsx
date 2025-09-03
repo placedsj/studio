@@ -48,11 +48,12 @@ export default function DocumentAnalyzerPage() {
   
   const handleAddToLog = () => {
     if (!result) return;
-    toast({
-        title: "Added to Evidence Log",
-        description: `"${result.suggestedTitle}" has been prepared for the log.`
+    const query = new URLSearchParams({
+        category: result.suggestedCategory,
+        description: result.summary,
+        evidence: `AI analysis of pasted text: "${result.suggestedTitle}"`,
     });
-    router.push('/evidence-log');
+    router.push(`/evidence-log?${query.toString()}`);
   };
 
   return (

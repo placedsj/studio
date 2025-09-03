@@ -19,10 +19,13 @@ import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
 import { Label } from '@/components/ui/label';
+import { useSearchParams } from 'next/navigation';
+
+const categories = ['Communication', 'Custody Exchange', 'Financial', 'Health', 'Other'] as const;
 
 const eventSchema = z.object({
   date: z.date(),
-  category: z.enum(['Communication', 'Custody Exchange', 'Financial', 'Health', 'Other']),
+  category: z.enum(categories),
   description: z.string().min(10, 'Please provide a detailed, factual description.'),
   evidence: z.string().optional(),
 });
@@ -61,11 +64,9 @@ const initialEvents: EventEntry[] = [
     }
 ];
 
-const categories = ['Communication', 'Custody Exchange', 'Financial', 'Health', 'Other'] as const;
 const users = ['Mom (Emma)', 'Dad (Craig)'] as const;
 
-
-export default function EvidenceLogPage() {
+function EvidenceLogPageInternal() {
     const [events, setEvents] = React.useState<EventEntry[]>(initialEvents);
     const [filteredEvents, setFilteredEvents] = React.useState<EventEntry[]>(initialEvents);
     const [categoryFilter, setCategoryFilter] = React.useState<string>('all');
@@ -73,6 +74,7 @@ export default function EvidenceLogPage() {
     const [sortOrder, setSortOrder] = React.useState<SortOrder>('desc');
 
     const { toast } = useToast();
+    const searchParams = useSearchParams();
 
     const form = useForm<z.infer<typeof eventSchema>>({
         resolver: zodResolver(eventSchema),
@@ -83,6 +85,23 @@ export default function EvidenceLogPage() {
             evidence: '',
         },
     });
+
+    React.useEffect(() => {
+        const category = searchParams.get('category');
+        const description = searchParams.get('description');
+        const evidence = searchParams.get('evidence');
+
+        if (category && categories.includes(category as any)) {
+            form.setValue('category', category as z.infer<typeof eventSchema>['category']);
+        }
+        if (description) {
+            form.setValue('description', description);
+        }
+        if (evidence) {
+            form.setValue('evidence', evidence);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchParams]);
 
     React.useEffect(() => {
         let result = [...events];
@@ -185,7 +204,7 @@ export default function EvidenceLogPage() {
                                   render={({ field }) => (
                                     <FormItem>
                                       <FormLabel>Category</FormLabel>
-                                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                      <Select onValueChange={field.onChange} value={field.value}>
                                         <FormControl>
                                           <SelectTrigger>
                                             <SelectValue placeholder="Select a category" />
@@ -303,4 +322,13 @@ export default function EvidenceLogPage() {
         </div>
     </div>
   );
+}
+
+// Wrap the component in a Suspense boundary to use useSearchParams
+export default function EvidenceLogPage() {
+    return (
+        <React.Suspense fallback={<div>Loading...</div>}>
+            <EvidenceLogPageInternal />
+        </React.Suspense>
+    );
 }
