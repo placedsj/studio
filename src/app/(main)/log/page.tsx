@@ -5,7 +5,7 @@ import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, BedDouble, Utensils, Baby, type LucideIcon } from 'lucide-react';
@@ -35,10 +35,10 @@ const logSchema = z.object({
 type LogEntry = z.infer<typeof logSchema> & { icon: LucideIcon };
 
 const initialLogs: LogEntry[] = [
-    { time: "10:45 AM", type: "Sleep", icon: BedDouble, details: "Woke up from nap" },
-    { time: "9:30 AM", type: "Sleep", icon: BedDouble, details: "Started nap" },
-    { time: "8:45 AM", type: "Diaper", icon: Baby, details: "Wet" },
-    { time: "8:15 AM", type: "Feeding", icon: Utensils, details: "6 oz formula" },
+    { time: "10:45", type: "Sleep", icon: BedDouble, details: "Woke up from nap" },
+    { time: "09:30", type: "Sleep", icon: BedDouble, details: "Started nap" },
+    { time: "08:45", type: "Diaper", icon: Baby, details: "Wet" },
+    { time: "08:15", type: "Feeding", icon: Utensils, details: "6 oz formula" },
 ];
 
 const iconMap: Record<string, LucideIcon> = {
@@ -183,7 +183,7 @@ export default function LogPage() {
                         <TableBody>
                             {logs.map((log, index) => (
                                 <TableRow key={index}>
-                                    <TableCell className="font-medium">{format(new Date(`1970-01-01T${log.time}`), 'p')}</TableCell>
+                                    <TableCell className="font-medium">{format(parse(log.time, 'HH:mm', new Date()), 'p')}</TableCell>
                                     <TableCell>
                                         <div className="flex items-center gap-2">
                                             <log.icon className="w-4 h-4 text-muted-foreground" />
