@@ -64,6 +64,7 @@ const navGroups = [
     icon: Wand2,
     items: [
         { href: '/ai-tools/schedule-optimizer', label: 'Schedule Optimizer', icon: Wand2 },
+        { href: '/ai-tools/communication-coach', label: 'Communication Coach', icon: MessagesSquare },
     ]
   }
 ];
@@ -73,7 +74,7 @@ export function SidebarNav() {
   const [openGroups, setOpenGroups] = useState<string[]>(() => {
     const activeGroup = navGroups.find(group => group.items.some(item => pathname.startsWith(item.href)));
     // Default open groups
-    const defaultOpen = ['Daily', 'Communication'];
+    const defaultOpen = ['Daily', 'Communication', 'AI Tools'];
     if (activeGroup && !defaultOpen.includes(activeGroup.title)) {
         return [...defaultOpen, activeGroup.title];
     }
