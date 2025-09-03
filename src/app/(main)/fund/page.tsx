@@ -20,6 +20,18 @@ export default function FundPage() {
 
     const balance = transactions.reduce((acc, t) => acc + t.amount, 0);
     const totalContributions = transactions.filter(t => t.amount > 0).reduce((acc, t) => acc + t.amount, 0);
+    const totalSpending = transactions.filter(t => t.amount < 0).reduce((acc, t) => acc + t.amount, 0) * -1;
+    
+    const spendingByCategory = transactions
+        .filter(t => t.amount < 0)
+        .reduce((acc, t) => {
+            if (!acc[t.category]) {
+                acc[t.category] = 0;
+            }
+            acc[t.category] += t.amount * -1;
+            return acc;
+        }, {} as Record<string, number>);
+
 
   return (
     <div className="space-y-8">
@@ -46,27 +58,15 @@ export default function FundPage() {
                 <CardDescription>A summary of spending by category.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-                 <div>
-                    <div className="flex justify-between mb-1">
-                        <span className="text-sm font-medium">Activities</span>
-                        <span className="text-sm text-muted-foreground">$75.00</span>
+                {Object.entries(spendingByCategory).map(([category, amount]) => (
+                    <div key={category}>
+                        <div className="flex justify-between mb-1">
+                            <span className="text-sm font-medium">{category}</span>
+                            <span className="text-sm text-muted-foreground">${amount.toFixed(2)}</span>
+                        </div>
+                        <Progress value={(amount / totalSpending) * 100} aria-label={`${category} expenses`} />
                     </div>
-                    <Progress value={40} aria-label="40% of expenses on Activities" />
-                 </div>
-                 <div>
-                    <div className="flex justify-between mb-1">
-                        <span className="text-sm font-medium">Clothing</span>
-                        <span className="text-sm text-muted-foreground">$55.50</span>
-                    </div>
-                    <Progress value={30} aria-label="30% of expenses on Clothing" />
-                 </div>
-                 <div>
-                    <div className="flex justify-between mb-1">
-                        <span className="text-sm font-medium">Medical</span>
-                        <span className="text-sm text-muted-foreground">$30.00</span>
-                    </div>
-                    <Progress value={20} aria-label="20% of expenses on Medical" />
-                 </div>
+                ))}
             </CardContent>
         </Card>
       </div>
