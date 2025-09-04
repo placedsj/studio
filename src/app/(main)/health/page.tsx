@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { format, isFuture, isPast } from 'date-fns';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { PlusCircle, Calendar as CalendarIcon, Syringe, Stethoscope, ClipboardNotes } from 'lucide-react';
+import { PlusCircle, Calendar as CalendarIcon, Syringe, Stethoscope, ClipboardList } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -50,7 +50,7 @@ const initialEvents: HealthEvent[] = [
 const iconMap: Record<HealthEvent['type'], React.ElementType> = {
     Appointment: Stethoscope,
     Immunization: Syringe,
-    Note: ClipboardNotes,
+    Note: ClipboardList,
 };
 
 export default function HealthPage() {
