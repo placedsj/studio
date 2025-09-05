@@ -101,7 +101,7 @@ function EvidenceLogPageInternal() {
             form.setValue('evidence', evidence);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchParams]);
+    }, [searchParams, form.setValue]);
 
     React.useEffect(() => {
         let result = [...events];
