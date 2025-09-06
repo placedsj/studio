@@ -4,14 +4,14 @@
 import * as React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
-import { format, isSameDay } from 'date-fns';
-import { Cake, Users, Handshake } from 'lucide-react';
+import { format, isSameDay, getDay, isTuesday, isThursday, isSunday, getWeek, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
+import { Cake, Users, Handshake, Phone, Clock } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 
 type CalendarEvent = {
   date: Date;
-  type: 'custody' | 'birthday' | 'holiday';
+  type: 'custody' | 'alternate' | 'birthday' | 'facetime';
   title: string;
 };
 
@@ -25,25 +25,49 @@ const familyBirthdays = [
 const custodyParents = {
     dad: { name: "Dad", color: "bg-blue-200 dark:bg-blue-800" },
     mom: { name: "Mom", color: "bg-pink-200 dark:bg-pink-800" },
+    alternate: { name: "Alternate Block", color: "bg-gray-200 dark:bg-gray-700"}
 };
 
-// --- Custody Schedule Logic ---
-// 2-2-3 schedule repeats every 14 days (Week 1: Mom M/T, Dad W/Th, Mom F/S/S. Week 2: Dad M/T, Mom W/Th, Dad F/S/S)
-const scheduleRotation = [
-    custodyParents.mom, custodyParents.mom, // Mon, Tue (2)
-    custodyParents.dad, custodyParents.dad, // Wed, Thu (2)
-    custodyParents.mom, custodyParents.mom, custodyParents.mom, // Fri, Sat, Sun (3)
-    custodyParents.dad, custodyParents.dad, // Mon, Tue (2)
-    custodyParents.mom, custodyParents.mom, // Wed, Thu (2)
-    custodyParents.dad, custodyParents.dad, custodyParents.dad, // Fri, Sat, Sun (3)
-];
-const scheduleStartDate = new Date(2024, 0, 1); // Start on Jan 1, 2024 (a Monday)
 
-const getCustodyForDate = (date: Date) => {
-    const dayDiff = Math.floor((date.getTime() - scheduleStartDate.getTime()) / (1000 * 60 * 60 * 24));
-    const scheduleIndex = (dayDiff % 14 + 14) % 14; // Ensure positive index
-    return scheduleRotation[scheduleIndex];
-};
+// --- "Dad's Plan" Schedule Logic ---
+const isDadsOnWeek = (date: Date) => {
+    // Assuming week starts on Sunday. An even week number is an "on-week" for Dad's FaceTime.
+    const weekNumber = getWeek(date, { weekStartsOn: 0 });
+    return weekNumber % 2 === 0;
+}
+
+const getEventsForDate = (date: Date): CalendarEvent[] => {
+    const dayOfWeek = getDay(date); // Sunday = 0, Monday = 1, ...
+    const events: CalendarEvent[] = [];
+
+    // 1. Core Custody and Alternate Blocks
+    if (isSunday(date)) {
+        events.push({ date, type: 'custody', title: `Harper with ${custodyParents.dad.name}` });
+    } else if (isTuesday(date) || isThursday(date)) {
+        events.push({ date, type: 'alternate', title: custodyParents.alternate.name });
+    } else {
+        events.push({ date, type: 'custody', title: `Harper with ${custodyParents.mom.name}` });
+    }
+
+    // 2. Virtual Contact (FaceTime)
+    const isSaturday = dayOfWeek === 6;
+    if (isDadsOnWeek(date) && (isSaturday || isSunday(date))) {
+        // On-week weekend FaceTime
+        events.push({ date, type: 'facetime', title: 'FaceTime with Dad (8am-12pm)'});
+    } else if (!isDadsOnWeek(date)) {
+        // Off-week daily FaceTime
+        events.push({ date, type: 'facetime', title: 'FaceTime with Dad (8am-12pm)'});
+    }
+
+    // 3. Birthdays
+    familyBirthdays.forEach(bday => {
+        if (date.getMonth() === bday.date.getMonth() && date.getDate() === bday.date.getDate()) {
+             events.push({ date, type: 'birthday', title: `${bday.name}'s Birthday` });
+        }
+    });
+
+    return events;
+}
 
 
 export default function CalendarPage() {
@@ -54,34 +78,10 @@ export default function CalendarPage() {
   React.useEffect(() => {
     document.title = "Calendar | Harper's Home";
     const today = date || new Date();
-    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    const start = startOfMonth(today);
+    const end = endOfMonth(today);
 
-    const monthEvents: CalendarEvent[] = [];
-    
-    let currentDay = new Date(startOfMonth);
-    while (currentDay <= endOfMonth) {
-        // Add custody events
-        const custody = getCustodyForDate(currentDay);
-        monthEvents.push({
-            date: new Date(currentDay),
-            type: 'custody',
-            title: `Harper with ${custody.name}`
-        });
-
-        // Add birthday events (for any year)
-        familyBirthdays.forEach(bday => {
-            if (currentDay.getMonth() === bday.date.getMonth() && currentDay.getDate() === bday.date.getDate()) {
-                 monthEvents.push({
-                    date: new Date(currentDay),
-                    type: 'birthday',
-                    title: `${bday.name}'s Birthday`
-                });
-            }
-        });
-        currentDay.setDate(currentDay.getDate() + 1);
-    }
-    
+    const monthEvents: CalendarEvent[] = eachDayOfInterval({ start, end }).flatMap(getEventsForDate);
     setEvents(monthEvents);
 
   }, [date]);
@@ -95,24 +95,23 @@ export default function CalendarPage() {
     router.push(`/communication?draft=${encodedMessage}`);
   };
 
-  const custodyModifiers = {
-      mom: (day: Date) => getCustodyForDate(day) === custodyParents.mom,
-      dad: (day: Date) => getCustodyForDate(day) === custodyParents.dad,
+  const dayHasEventType = (day: Date, eventType: CalendarEvent['type']) => {
+      return events.some(e => isSameDay(e.date, day) && e.type === eventType);
+  }
+
+  const modifiers = {
+      mom: (day: Date) => dayHasEventType(day, 'custody') && !isSunday(day),
+      dad: isSunday,
+      alternate: (day: Date) => isTuesday(day) || isThursday(day),
+      birthday: (day: Date) => dayHasEventType(day, 'birthday'),
   };
   
-  const custodyModifiersClassNames = {
+  const modifiersClassNames = {
       mom: 'bg-pink-100 text-pink-900 dark:bg-pink-900/50 dark:text-pink-100 rounded-none',
       dad: 'bg-blue-100 text-blue-900 dark:bg-blue-900/50 dark:text-blue-100 rounded-none',
-  };
-
-  const birthdayModifier = (day: Date) => {
-    return familyBirthdays.some(bday => 
-        day.getMonth() === bday.date.getMonth() && day.getDate() === bday.date.getDate()
-    );
-  };
-  const birthdayModifiersClassNames = {
+      alternate: 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 rounded-none',
       birthday: 'font-bold border-2 border-primary rounded-full',
-  }
+  };
 
   const selectedDayEvents = date ? events.filter(e => isSameDay(e.date, date)) : [];
 
@@ -120,9 +119,9 @@ export default function CalendarPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold font-headline uppercase tracking-tight">Family Calendar</h1>
+        <h1 className="text-3xl font-bold font-headline uppercase tracking-tight">Family Calendar ("Dad's Plan")</h1>
         <p className="text-muted-foreground mt-1">
-          Coordinate schedules, events, and memories.
+          Coordinate schedules, events, and memories based on the current plan.
         </p>
       </div>
       <div className="grid gap-8 md:grid-cols-3">
@@ -133,8 +132,8 @@ export default function CalendarPage() {
               selected={date}
               onSelect={setDate}
               className="p-4"
-              modifiers={{ ...custodyModifiers, birthday: birthdayModifier }}
-              modifiersClassNames={{ ...custodyModifiersClassNames, ...birthdayModifiersClassNames }}
+              modifiers={modifiers}
+              modifiersClassNames={modifiersClassNames}
             />
           </CardContent>
         </Card>
@@ -151,6 +150,10 @@ export default function CalendarPage() {
                      <div className="flex items-center gap-2">
                         <div className="w-4 h-4 rounded-full bg-blue-100 border"></div>
                         <span className="text-sm font-medium">{custodyParents.dad.name}'s Time</span>
+                    </div>
+                     <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 rounded-full bg-gray-200 border"></div>
+                        <span className="text-sm font-medium">{custodyParents.alternate.name}</span>
                     </div>
                      <div className="flex items-center gap-2">
                         <div className="w-4 h-4 rounded-full border-2 border-primary flex items-center justify-center">
@@ -171,9 +174,14 @@ export default function CalendarPage() {
                         <ul className="space-y-3">
                             {selectedDayEvents.map((event, index) => (
                                 <li key={index} className="flex items-center gap-3">
-                                    {event.type === 'custody' && (
+                                    {['custody', 'alternate'].includes(event.type) && (
                                         <div className="p-2 bg-muted rounded-full">
                                             <Users className="w-4 h-4 text-muted-foreground" />
+                                        </div>
+                                    )}
+                                     {event.type === 'facetime' && (
+                                        <div className="p-2 bg-muted rounded-full">
+                                            <Phone className="w-4 h-4 text-muted-foreground" />
                                         </div>
                                     )}
                                     {event.type === 'birthday' && (
