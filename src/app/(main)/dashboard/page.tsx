@@ -1,70 +1,88 @@
 // src/app/(main)/dashboard/page.tsx
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { BookHeart, Calendar, FileClock, Landmark, MessagesSquare, TrendingUp, Cake, Users, Handshake, CheckCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Baby, Calendar, FileClock, HeartPulse, Stethoscope, BookHeart, TrendingUp, Utensils, BedDouble, PlusCircle } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import Image from 'next/image';
-import { Badge } from '@/components/ui/badge';
-import { format, addDays } from 'date-fns';
+import { format, differenceInMonths } from 'date-fns';
 
 export const metadata: Metadata = {
   title: "Dashboard | Harper's Home",
 };
 
+// --- Data based on Harper being 10 months old ---
+const harper_dob = new Date("2023-11-12"); // Set to make her ~10 months old in Sept 2024
+
+// --- Mock Data for Infant Dashboard ---
+const recentLogs = [
+    { time: "1:30 PM", type: "Sleep", icon: BedDouble, details: "Woke up from nap" },
+    { time: "12:00 PM", type: "Feeding", icon: Utensils, details: "Ate solid foods (peas)" },
+    { time: "11:00 AM", type: "Sleep", icon: BedDouble, details: "Started nap" },
+];
+
+const upcomingAppointments = [
+    { date: new Date("2024-09-25"), icon: Stethoscope, title: "10-Month Well-Child Visit", doctor: "Dr. Emily Carter" },
+];
+
+const recentMilestones = [
+    { title: "Started Crawling", date: new Date("2024-08-15") },
+    { title: "First Solid Foods", date: new Date("2024-06-20") },
+];
+
 const quickLinks = [
-    { href: "/calendar", icon: Calendar, title: "Family Calendar", description: "View custody schedules & birthdays." },
-    { href: "/communication", icon: MessagesSquare, title: "Communication Hub", description: "Message the other parent." },
+    { href: "/log", icon: Baby, title: "Harper's Log", description: "Track daily activities." },
+    { href: "/health", icon: HeartPulse, title: "Health Hub", description: "View medical records." },
+    { href: "/milestones", icon: TrendingUp, title: "Milestones", description: "See developmental progress." },
     { href: "/journal", icon: BookHeart, title: "Family Journal", description: "Share precious moments." },
-    { href: "/fund", icon: Landmark, title: "Shared Fund", description: "Manage shared expenses." },
-    { href: "/milestones", icon: TrendingUp, title: "Milestones", description: "Track developmental progress." },
+    { href: "/calendar", icon: Calendar, title: "Family Calendar", description: "Coordinate schedules." },
     { href: "/evidence-log", icon: FileClock, title: "Evidence Log", description: "Record important events." },
 ];
 
-const upcomingEvents = [
-    { date: new Date(), icon: Handshake, title: "Custody Exchange", description: "Dad's week begins." },
-    { date: addDays(new Date(), 2), icon: CheckCircle, title: "Soccer Practice", description: "4:00 PM at the park." },
-    { date: addDays(new Date(), 5), icon: Cake, title: "Harper's Birthday Party", description: "2:00 PM at Mom's house." },
-];
 
-const recentMilestone = {
-    category: 'Achievement',
-    title: "Learned to Ride a Bike",
-    date: new Date("2023-09-10"),
-    description: "Rode without training wheels for the first time at the park."
-};
-
-const fundBalance = 339.50;
-
-
-export default function DashboardPage() {
-  return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold font-headline uppercase tracking-tight">Welcome Back</h1>
-        <p className="text-muted-foreground mt-1">
-          Here's a quick overview of your co-parenting landscape.
-        </p>
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-3">
-        {/* Column 1: Upcoming Events & Shared Fund */}
-        <div className="space-y-6">
+// --- Infant Dashboard Component (0-24 months) ---
+const InfantDashboard = () => (
+    <div className="grid gap-6 lg:grid-cols-3">
+        {/* Column 1: Recent Logs & Appointments */}
+        <div className="space-y-6 lg:col-span-1">
             <Card>
                 <CardHeader>
-                    <CardTitle>Upcoming Events</CardTitle>
-                    <CardDescription>What's happening this week.</CardDescription>
+                    <CardTitle>Recent Activity</CardTitle>
+                    <CardDescription>From Harper's Log.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <ul className="space-y-4">
-                        {upcomingEvents.map((event, index) => (
+                        {recentLogs.map((log, index) => (
                              <li key={index} className="flex items-start gap-4">
                                 <div className="p-3 bg-muted rounded-lg mt-1">
-                                    <event.icon className="w-5 h-5 text-muted-foreground" />
+                                    <log.icon className="w-5 h-5 text-muted-foreground" />
+                                </div>
+                                <div>
+                                    <p className="font-semibold">{log.type}</p>
+                                    <p className="text-sm text-muted-foreground">{log.details}</p>
+                                    <p className="text-xs text-muted-foreground/80">{log.time}</p>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                     <Button asChild className="w-full mt-4">
+                        <Link href="/log"><PlusCircle /><span>Add to Log</span></Link>
+                    </Button>
+                </CardContent>
+            </Card>
+             <Card>
+                <CardHeader>
+                    <CardTitle>Upcoming Appointments</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <ul className="space-y-4">
+                        {upcomingAppointments.map((event, index) => (
+                             <li key={index} className="flex items-start gap-4">
+                                <div className="p-3 bg-primary/10 rounded-lg mt-1">
+                                    <event.icon className="w-5 h-5 text-primary" />
                                 </div>
                                 <div>
                                     <p className="font-semibold">{event.title}</p>
-                                    <p className="text-sm text-muted-foreground">{event.description}</p>
+                                    <p className="text-sm text-muted-foreground">with {event.doctor}</p>
                                     <p className="text-xs text-muted-foreground/80">{format(event.date, 'EEEE, MMM d')}</p>
                                 </div>
                             </li>
@@ -72,34 +90,22 @@ export default function DashboardPage() {
                     </ul>
                 </CardContent>
             </Card>
-             <Card>
-                <CardHeader>
-                    <CardTitle>Shared Fund</CardTitle>
-                    <CardDescription>Current balance for shared expenses.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <p className="text-4xl font-bold">${fundBalance.toFixed(2)}</p>
-                    <Link href="/fund" className="text-sm font-medium text-primary hover:underline mt-2 inline-block">
-                        View all transactions
-                    </Link>
-                </CardContent>
-            </Card>
         </div>
-        
+
         {/* Column 2: Quick Links */}
-        <div className="space-y-6">
+        <div className="space-y-6 lg:col-span-1">
              <Card className="h-full">
                 <CardHeader>
                     <CardTitle>Quick Links</CardTitle>
-                    <CardDescription>Navigate to key sections of your dashboard.</CardDescription>
+                    <CardDescription>Navigate to key sections.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <ul className="divide-y">
                         {quickLinks.map((link) => (
                             <li key={link.href}>
                                 <Link href={link.href} className="flex items-center gap-4 p-4 -mx-4 hover:bg-accent/50 rounded-lg transition-colors">
-                                    <div className="p-3 bg-primary/10 rounded-lg">
-                                        <link.icon className="w-5 h-5 text-primary" />
+                                    <div className="p-3 bg-muted rounded-lg">
+                                        <link.icon className="w-5 h-5 text-muted-foreground" />
                                     </div>
                                     <div>
                                         <p className="font-semibold">{link.title}</p>
@@ -113,46 +119,70 @@ export default function DashboardPage() {
              </Card>
         </div>
 
-         {/* Column 3: Journal & Milestone */}
-        <div className="space-y-6">
-            <Card>
-                <CardHeader>
-                    <CardTitle>Recent Journal Entry</CardTitle>
-                    <CardDescription>A glimpse of the latest shared memory.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="space-y-4">
-                        <Image src="https://picsum.photos/400/200" data-ai-hint="soccer goal" alt="Harper's First Soccer Goal!" width={400} height={200} className="rounded-lg object-cover w-full aspect-video" />
-                        <div className="space-y-1">
-                             <h3 className="font-semibold">Harper's First Soccer Goal!</h3>
-                             <p className="text-sm text-muted-foreground">So proud of Harper today! She scored her very first goal...</p>
-                        </div>
-                        <Link href="/journal" className="text-sm font-medium text-primary hover:underline">
-                            View all entries
-                        </Link>
-                    </div>
-                </CardContent>
-            </Card>
+         {/* Column 3: Milestones */}
+        <div className="space-y-6 lg:col-span-1">
              <Card>
                 <CardHeader>
-                    <CardTitle>Recent Milestone</CardTitle>
-                    <CardDescription>Celebrating the latest achievement.</CardDescription>
+                    <CardTitle>Recent Milestones</CardTitle>
+                    <CardDescription>Celebrating the latest achievements.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div className="space-y-2">
-                        <Badge variant="secondary">{recentMilestone.category}</Badge>
-                        <h3 className="font-semibold text-lg">{recentMilestone.title}</h3>
-                        <p className="text-sm text-muted-foreground">{recentMilestone.description}</p>
-                        <p className="text-xs text-muted-foreground pt-1">{format(recentMilestone.date, 'PPP')}</p>
-                         <Link href="/milestones" className="text-sm font-medium text-primary hover:underline pt-2 block">
-                            View all milestones
-                        </Link>
-                    </div>
+                    <ul className="space-y-4">
+                       {recentMilestones.map((milestone, index) => (
+                             <li key={index} className="flex items-start gap-4">
+                                <div className="p-3 bg-accent rounded-lg mt-1">
+                                    <TrendingUp className="w-5 h-5 text-accent-foreground" />
+                                </div>
+                                <div>
+                                    <p className="font-semibold">{milestone.title}</p>
+                                    <p className="text-xs text-muted-foreground/80">{format(milestone.date, 'PPP')}</p>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                     <Button asChild variant="secondary" className="w-full mt-4">
+                        <Link href="/milestones">View all milestones</Link>
+                    </Button>
                 </CardContent>
             </Card>
         </div>
-      </div>
+    </div>
+);
 
+// --- School-Age Dashboard Component (Placeholder for future) ---
+const SchoolAgeDashboard = () => (
+    <Card>
+        <CardHeader>
+            <CardTitle>School-Age Dashboard</CardTitle>
+        </CardHeader>
+        <CardContent>
+            <p>This dashboard will show custody schedules, school events, shared funds, etc.</p>
+        </CardContent>
+    </Card>
+);
+
+
+export default function DashboardPage() {
+    const ageInMonths = differenceInMonths(new Date(), harper_dob);
+    
+    let DashboardComponent;
+    if (ageInMonths <= 24) {
+        DashboardComponent = InfantDashboard;
+    } else {
+        // This is where you'd add logic for Toddler, Preschool, etc.
+        DashboardComponent = SchoolAgeDashboard;
+    }
+
+
+  return (
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-3xl font-bold font-headline uppercase tracking-tight">Welcome Back</h1>
+        <p className="text-muted-foreground mt-1">
+          Here's a quick overview of Harper's world, tailored for her current age.
+        </p>
+      </div>
+      <DashboardComponent />
     </div>
   );
 }
