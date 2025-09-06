@@ -38,10 +38,10 @@ const milestoneSchema = z.object({
 type Milestone = z.infer<typeof milestoneSchema>;
 
 const initialMilestones: Milestone[] = [
-    { category: 'Achievement', title: "First Steps", date: new Date("2022-06-05"), description: "Harper took her first unassisted steps today!" },
-    { category: 'Health', title: "Annual Check-up", date: new Date("2023-08-20"), description: "Everything looks great. Next appointment in one year." },
-    { category: 'Growth', title: "Height: 45 inches", date: new Date("2023-08-20"), description: "Grew 2 inches since last year." },
-    { category: 'Achievement', title: "Learned to Ride a Bike", date: new Date("2023-09-10"), description: "Rode without training wheels for the first time at the park." },
+    { category: 'Achievement', title: "First Steps", date: new Date("2025-06-05"), description: "Harper took her first unassisted steps today!" },
+    { category: 'Health', title: "Annual Check-up", date: new Date("2025-08-20"), description: "Everything looks great. Next appointment in one year." },
+    { category: 'Growth', title: "Height: 29 inches", date: new Date("2025-08-20"), description: "Grew 2 inches since last year." },
+    { category: 'Achievement', title: "Learned to Wave", date: new Date("2025-09-01"), description: "Waved 'bye-bye' for the first time." },
 ];
 
 const iconMap: Record<Milestone['category'], React.ElementType> = {
@@ -62,7 +62,7 @@ export default function MilestonesPage() {
             title: '',
             description: '',
             category: 'Achievement',
-            date: new Date(),
+            date: new Date("2025-09-06T00:00:00Z"),
         },
     });
 
@@ -144,7 +144,7 @@ export default function MilestonesPage() {
                             mode="single"
                             selected={field.value}
                             onSelect={field.onChange}
-                            disabled={(date) => date > new Date()}
+                            disabled={(date) => date > new Date("2025-09-06T00:00:00Z")}
                             initialFocus
                           />
                         </PopoverContent>

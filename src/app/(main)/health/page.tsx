@@ -40,11 +40,11 @@ const eventSchema = z.object({
 type HealthEvent = z.infer<typeof eventSchema>;
 
 const initialEvents: HealthEvent[] = [
-    { type: 'Appointment', title: "Annual Check-up", date: new Date("2025-08-20T10:00:00Z"), doctor: "Dr. Emily Carter", details: "Routine annual physical exam." },
-    { type: 'Immunization', title: "Varicella (Chickenpox) Vaccine", date: new Date("2024-11-15T11:00:00Z"), doctor: "Dr. Emily Carter", details: "Second dose of the Varicella vaccine." },
-    { type: 'Appointment', title: "Dental Cleaning", date: new Date("2024-09-05T14:00:00Z"), doctor: "Dr. Adams", details: "Routine 6-month cleaning and check-up." },
-    { type: 'Immunization', title: "MMR Vaccine", date: new Date("2024-11-15T11:00:00Z"), doctor: "Dr. Emily Carter", details: "Second dose of the MMR vaccine." },
-    { type: 'Note', title: "Allergy Season Prep", date: new Date("2024-03-01T00:00:00Z"), details: "Dr. Carter recommended starting daily allergy medication around this time if symptoms appear." }
+    { type: 'Appointment', title: "Annual Check-up", date: new Date("2026-08-20T10:00:00Z"), doctor: "Dr. Emily Carter", details: "Routine annual physical exam." },
+    { type: 'Immunization', title: "Varicella (Chickenpox) Vaccine", date: new Date("2025-11-15T11:00:00Z"), doctor: "Dr. Emily Carter", details: "Second dose of the Varicella vaccine." },
+    { type: 'Appointment', title: "Dental Cleaning", date: new Date("2025-09-05T14:00:00Z"), doctor: "Dr. Adams", details: "Routine 6-month cleaning and check-up." },
+    { type: 'Immunization', title: "MMR Vaccine", date: new Date("2025-11-15T11:00:00Z"), doctor: "Dr. Emily Carter", details: "Second dose of the MMR vaccine." },
+    { type: 'Note', title: "Allergy Season Prep", date: new Date("2025-03-01T00:00:00Z"), details: "Dr. Carter recommended starting daily allergy medication around this time if symptoms appear." }
 ];
 
 const iconMap: Record<HealthEvent['type'], React.ElementType> = {

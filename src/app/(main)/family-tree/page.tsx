@@ -11,8 +11,8 @@ export const metadata: Metadata = {
 const familyMembers = {
     harper: { name: "Harper Ryan", dob: "11/12/2024", initials: "HR" },
     parents: [
-        { name: "Dad (Craig)", dob: "03/23/1990", initials: "D" },
-        { name: "Mom (Emma)", dob: "12/15/1995", initials: "M" },
+        { name: "Dad (Craig)", dob: "03/23/1990", initials: "C" },
+        { name: "Mom (Emma)", dob: "12/15/1995", initials: "E" },
     ],
     maternalGrandparents: [
         { name: "Nanny Ryan (Jane)", initials: "JR" },

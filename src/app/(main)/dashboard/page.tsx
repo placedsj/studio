@@ -10,8 +10,8 @@ import { Calendar as MiniCalendar } from '@/components/ui/calendar';
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 
-// --- Data based on Harper being 10 months old ---
-const harper_dob = new Date("2023-11-12"); // Set to make her ~10 months old in Sept 2024
+// --- Data based on Harper being 10 months old as of Sept 6, 2025 ---
+const harper_dob = new Date("2024-11-12");
 
 // --- Mock Data for Infant Dashboard ---
 const recentLogs = [
@@ -21,12 +21,12 @@ const recentLogs = [
 ];
 
 const upcomingAppointments = [
-    { date: new Date(new Date().setDate(new Date().getDate() + 5)), icon: Stethoscope, title: "10-Month Well-Child Visit", doctor: "Dr. Emily Carter" },
+    { date: new Date("2025-09-11T00:00:00Z"), icon: Stethoscope, title: "10-Month Well-Child Visit", doctor: "Dr. Emily Carter" },
 ];
 
 const recentMilestones = [
-    { title: "Started Crawling", date: new Date("2024-08-15") },
-    { title: "First Solid Foods", date: new Date("2024-06-20") },
+    { title: "Started Crawling", date: new Date("2025-08-15") },
+    { title: "First Solid Foods", date: new Date("2025-06-20") },
 ];
 
 const quickLinks = [
@@ -95,7 +95,7 @@ const InfantDashboard = () => (
                             <div>
                                 <p className="font-semibold">Next Custody Exchange</p>
                                 <p className="text-sm text-muted-foreground">with Mom</p>
-                                <p className="text-xs text-muted-foreground/80">{format(new Date(new Date().setDate(new Date().getDate() + 2)), 'EEEE, MMM d')}</p>
+                                <p className="text-xs text-muted-foreground/80">{format(new Date("2025-09-08T00:00:00Z"), 'EEEE, MMM d')}</p>
                             </div>
                         </li>
                     </ul>
@@ -135,7 +135,7 @@ const InfantDashboard = () => (
                 <CardContent className="p-0">
                     <MiniCalendar
                         mode="single"
-                        selected={new Date()}
+                        selected={new Date("2025-09-06T00:00:00Z")}
                         className="p-3"
                         modifiers={{
                             custody_mom: (day: Date) => day.getDay() % 3 === 0, // Mocking some custody days
@@ -193,7 +193,7 @@ const SchoolAgeDashboard = () => (
 
 
 export default function DashboardPage() {
-    const ageInMonths = differenceInMonths(new Date(), harper_dob);
+    const ageInMonths = differenceInMonths(new Date("2025-09-06T00:00:00Z"), harper_dob);
     
     let DashboardComponent;
     if (ageInMonths <= 24) {

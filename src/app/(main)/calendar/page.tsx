@@ -17,7 +17,7 @@ type CalendarEvent = {
 
 // --- Data based on family tree and user request ---
 const familyBirthdays = [
-    { name: "Harper Ryan", date: new Date(2024, 10, 12) }, // Nov 12
+    { name: "Harper Ryan", date: new Date(2025, 10, 12) }, // Nov 12
     { name: "Dad (Craig)", date: new Date(1990, 2, 23) },  // Mar 23
     { name: "Mom (Emma)", date: new Date(1995, 11, 15) }, // Dec 15
 ];
@@ -71,13 +71,13 @@ const getEventsForDate = (date: Date): CalendarEvent[] => {
 
 
 export default function CalendarPage() {
-  const [date, setDate] = React.useState<Date | undefined>(new Date());
+  const [date, setDate] = React.useState<Date | undefined>(new Date("2025-09-06T00:00:00Z"));
   const [events, setEvents] = React.useState<CalendarEvent[]>([]);
   const router = useRouter();
 
   React.useEffect(() => {
     document.title = "Calendar | Harper's Home";
-    const today = date || new Date();
+    const today = date || new Date("2025-09-06T00:00:00Z");
     const start = startOfMonth(today);
     const end = endOfMonth(today);
 

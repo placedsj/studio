@@ -11,11 +11,11 @@ export const metadata: Metadata = {
 
 export default function FundPage() {
     const transactions = [
-        { date: "2023-11-01", description: "Mom's Contribution", category: "Contribution", amount: 250.00 },
-        { date: "2023-11-02", description: "Fall Soccer League Fees", category: "Activities", amount: -75.00 },
-        { date: "2023-11-05", description: "Dad's Contribution", category: "Contribution", amount: 250.00 },
-        { date: "2023-11-10", description: "Winter Coat", category: "Clothing", amount: -55.50 },
-        { date: "2023-11-15", description: "Doctor's Visit Co-pay", category: "Medical", amount: -30.00 },
+        { date: "2025-08-01", description: "Mom's Contribution", category: "Contribution", amount: 250.00 },
+        { date: "2025-08-02", description: "Fall Soccer League Fees", category: "Activities", amount: -75.00 },
+        { date: "2025-08-05", description: "Dad's Contribution", category: "Contribution", amount: 250.00 },
+        { date: "2025-08-10", description: "Winter Coat", category: "Clothing", amount: -55.50 },
+        { date: "2025-08-15", description: "Doctor's Visit Co-pay", category: "Medical", amount: -30.00 },
     ];
 
     const balance = transactions.reduce((acc, t) => acc + t.amount, 0);

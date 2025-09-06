@@ -37,7 +37,7 @@ type SortOrder = 'desc' | 'asc';
 
 const initialEvents: EventEntry[] = [
     {
-        date: new Date("2023-11-10T10:00:00Z"),
+        date: new Date("2025-08-10T10:00:00Z"),
         category: "Communication",
         description: "Received a text message regarding a change in pickup time for Saturday.",
         evidence: "Screenshot of text message saved.",
@@ -46,14 +46,14 @@ const initialEvents: EventEntry[] = [
         userResponse: "Agreed to the new time."
     },
     {
-        date: new Date("2023-11-08T15:30:00Z"),
+        date: new Date("2025-08-08T15:30:00Z"),
         category: "Financial",
         description: "Paid for Harper's fall soccer league registration fee.",
         evidence: "Receipt saved as Soccer_Receipt.pdf",
         loggedBy: "Dad (Craig)"
     },
      {
-        date: new Date("2023-11-12T18:00:00Z"),
+        date: new Date("2025-08-12T18:00:00Z"),
         category: "Custody Exchange",
         description: "Dad was 15 minutes late for the custody exchange at the library.",
         evidence: "Documented time of arrival.",
@@ -62,7 +62,7 @@ const initialEvents: EventEntry[] = [
         userResponse: "Sent a text to confirm his ETA."
     },
     {
-        date: new Date("2023-10-25T09:00:00Z"),
+        date: new Date("2025-07-25T09:00:00Z"),
         category: "Health",
         description: "Took Harper to her annual check-up. Doctor noted she is healthy.",
         evidence: "Check-up summary from Dr. Carter's office.",
@@ -86,7 +86,7 @@ function EvidenceLogPageInternal() {
     const form = useForm<z.infer<typeof eventSchema>>({
         resolver: zodResolver(eventSchema),
         defaultValues: {
-            date: new Date(),
+            date: new Date("2025-09-06T00:00:00Z"),
             category: 'Communication',
             description: '',
             evidence: '',
@@ -137,7 +137,7 @@ function EvidenceLogPageInternal() {
 
     function onSubmit(values: z.infer<typeof eventSchema>) {
         // In a real app, we'd get the current user's name
-        const loggedBy = "Mom (Emma)"; // Placeholder
+        const loggedBy = "Dad (Craig)"; // Placeholder
         const newEvent: EventEntry = { ...values, loggedBy };
         setEvents(prev => [newEvent, ...prev]);
         toast({
@@ -198,7 +198,7 @@ function EvidenceLogPageInternal() {
                                             mode="single"
                                             selected={field.value}
                                             onSelect={field.onChange}
-                                            disabled={(date) => date > new Date()}
+                                            disabled={(date) => date > new Date("2025-09-06T00:00:00Z")}
                                             initialFocus
                                           />
                                         </PopoverContent>

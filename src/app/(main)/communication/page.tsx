@@ -27,7 +27,7 @@ const initialMessages: Message[] = [
         id: 1,
         user: 'Dad',
         avatar: '',
-        initials: 'D',
+        initials: 'C',
         text: "Hey, just wanted to confirm you're picking up Harper from school today?",
         timestamp: "10:30 AM"
     },
@@ -35,7 +35,7 @@ const initialMessages: Message[] = [
         id: 2,
         user: 'Mom',
         avatar: '',
-        initials: 'M',
+        initials: 'E',
         text: "Yes, I'll be there to pick her up. She has her soccer practice afterwards, so I'll take her to that as well.",
         timestamp: "10:32 AM"
     },
@@ -64,7 +64,7 @@ function CommunicationPageInternal() {
             id: messages.length + 1,
             user: 'Dad', // Assuming 'Dad' is the current user for demo
             avatar: '',
-            initials: 'D',
+            initials: 'C',
             text: newMessage,
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         };
@@ -115,7 +115,7 @@ function CommunicationPageInternal() {
         </div>
         <Card>
             <CardHeader>
-                <CardTitle>Conversation with Mom</CardTitle>
+                <CardTitle>Conversation with Emma</CardTitle>
                 <CardDescription>All messages are timestamped and analyzed by the AI Mediator to suggest actions.</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col h-[65vh]">

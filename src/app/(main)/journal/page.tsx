@@ -41,14 +41,14 @@ type JournalEntry = z.infer<typeof entrySchema>;
 const initialEntries: JournalEntry[] = [
     {
       title: "Harper's First Soccer Goal!",
-      date: new Date("2023-10-26"),
+      date: new Date("2025-08-26"),
       content: "So proud of Harper today! She scored her very first goal in the game against the Blue Jays. Her face lit up with so much joy. It was a beautiful moment.",
       image: "https://picsum.photos/400/200",
       dataAiHint: "soccer goal"
     },
     {
       title: "Visit to the Science Museum",
-      date: new Date("2023-10-15"),
+      date: new Date("2025-08-15"),
       content: "We had a fantastic day exploring the science museum. Harper was fascinated by the dinosaur exhibit and the planetarium show. A day full of curiosity and learning.",
       image: "https://picsum.photos/400/201",
       dataAiHint: "science museum"
@@ -65,7 +65,7 @@ export default function JournalPage() {
         defaultValues: {
             title: '',
             content: '',
-            date: new Date(),
+            date: new Date("2025-09-06T00:00:00Z"),
             image: '',
             dataAiHint: '',
         },
@@ -151,7 +151,7 @@ export default function JournalPage() {
                             mode="single"
                             selected={field.value}
                             onSelect={field.onChange}
-                            disabled={(date) => date > new Date()}
+                            disabled={(date) => date > new Date("2025-09-06T00:00:00Z")}
                             initialFocus
                           />
                         </PopoverContent>

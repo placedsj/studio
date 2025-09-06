@@ -37,7 +37,7 @@ export default function ProfilePage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "Harper Ryan",
-      dob: new Date("2023-11-12"), // Updated to make Harper ~10 months old
+      dob: new Date("2024-11-12"),
       weightLb: 20,
       weightOz: 5,
       height: 28,
