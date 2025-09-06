@@ -4,7 +4,7 @@
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import {
-    Home, Calendar, BookHeart, Landmark, TrendingUp, Baby, Heart, AlertTriangle, Users, MessagesSquare, ScanLine, FileSearch, ChevronDown, LayoutDashboard, HeartPulse, Gavel, FileClock, Wand2
+    Home, Calendar, BookHeart, Landmark, TrendingUp, Baby, Heart, AlertTriangle, Users, MessagesSquare, ScanLine, FileSearch, ChevronDown, LayoutDashboard, HeartPulse, Gavel, FileClock
 } from 'lucide-react';
 import {
     SidebarMenu,
@@ -23,8 +23,6 @@ const navGroups = [
       { href: '/dashboard', label: 'Dashboard', icon: Home },
       { href: '/calendar', label: 'Calendar', icon: Calendar },
       { href: '/journal', label: 'Journal', icon: BookHeart },
-      { href: '/log', label: "Harper's Log", icon: Baby },
-      { href: '/milestones', label: 'Milestones', icon: TrendingUp },
     ],
   },
   {
@@ -38,10 +36,8 @@ const navGroups = [
       title: 'Health & Info',
       icon: HeartPulse,
       items: [
-          { href: '/profile', label: "Harper's Profile", icon: Heart },
           { href: '/health', label: 'Health Hub', icon: HeartPulse },
           { href: '/family-tree', label: 'Family Tree', icon: Users },
-          { href: '/emergency', label: 'Emergency', icon: AlertTriangle },
       ]
   },
   {
@@ -49,24 +45,7 @@ const navGroups = [
       icon: Gavel,
       items: [
           { href: '/evidence-log', label: 'Evidence Log', icon: FileClock },
-          { href: '/evidence-ai', label: 'Evidence AI', icon: ScanLine },
-          { href: '/document-analyzer', label: 'Document Analyzer', icon: FileSearch },
       ]
-  },
-    {
-    title: 'Communication',
-    icon: MessagesSquare,
-    items: [
-      { href: '/communication', label: 'Communication Hub', icon: MessagesSquare },
-    ]
-  },
-  {
-    title: 'AI Tools',
-    icon: Wand2,
-    items: [
-        { href: '/ai-tools/schedule-optimizer', label: 'Schedule Optimizer', icon: Wand2 },
-        { href: '/ai-tools/communication-coach', label: 'Communication Coach', icon: MessagesSquare },
-    ]
   }
 ];
 
@@ -75,7 +54,7 @@ export function SidebarNav() {
   const [openGroups, setOpenGroups] = useState<string[]>(() => {
     const activeGroup = navGroups.find(group => group.items.some(item => pathname.startsWith(item.href)));
     // Default open groups
-    const defaultOpen = ['Daily', 'Communication', 'AI Tools', 'Health & Info', 'Legal & Evidence'];
+    const defaultOpen = ['Daily', 'Health & Info', 'Legal & Evidence'];
     if (activeGroup && !defaultOpen.includes(activeGroup.title)) {
         return [...defaultOpen, activeGroup.title];
     }
