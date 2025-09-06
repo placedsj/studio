@@ -108,7 +108,7 @@ function CommunicationPageInternal() {
   return (
     <div className="space-y-8">
         <div>
-            <h1 className="text-3xl font-bold font-headline uppercase tracking-tight">COMMUNICATION HUB</h1>
+            <h1 className="text-3xl font-bold font-headline uppercase tracking-tight">Communication Hub</h1>
             <p className="text-muted-foreground mt-1">
                 A secure, AI-mediated channel for all co-parenting communication.
             </p>

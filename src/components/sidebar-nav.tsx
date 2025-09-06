@@ -4,7 +4,7 @@
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import {
-    Home, Calendar, BookHeart, Landmark, TrendingUp, Baby, Heart, AlertTriangle, Users, MessagesSquare, ScanLine, FileSearch, ChevronDown, LayoutDashboard, HeartPulse, Gavel, FileClock
+    Home, Calendar, BookHeart, Landmark, TrendingUp, Baby, Heart, AlertTriangle, Users, MessagesSquare, ScanLine, FileSearch, ChevronDown, LayoutDashboard, HeartPulse, Gavel, FileClock, Wand2
 } from 'lucide-react';
 import {
     SidebarMenu,
@@ -22,14 +22,16 @@ const navGroups = [
     items: [
       { href: '/dashboard', label: 'Dashboard', icon: Home },
       { href: '/calendar', label: 'Calendar', icon: Calendar },
+      { href: '/log', label: "Harper's Log", icon: Baby },
+      { href: '/milestones', label: 'Milestones', icon: TrendingUp },
       { href: '/journal', label: 'Journal', icon: BookHeart },
     ],
   },
   {
-    title: 'Financial',
-    icon: Landmark,
+    title: 'Communication',
+    icon: MessagesSquare,
     items: [
-      { href: '/fund', label: 'Shared Fund', icon: Landmark },
+        { href: '/communication', label: 'Communication Hub', icon: MessagesSquare },
     ]
   },
   {
@@ -37,8 +39,18 @@ const navGroups = [
       icon: HeartPulse,
       items: [
           { href: '/health', label: 'Health Hub', icon: HeartPulse },
+          { href: '/profile', label: "Harper's Profile", icon: Heart },
           { href: '/family-tree', label: 'Family Tree', icon: Users },
+          { href: '/emergency', label: 'Emergency', icon: AlertTriangle },
       ]
+  },
+  {
+    title: 'Financial',
+    icon: Landmark,
+    items: [
+      { href: '/fund', label: 'Shared Fund', icon: Landmark },
+      { href: '/shared-lists', label: 'Shared Lists', icon: ScanLine },
+    ]
   },
   {
       title: 'Legal & Evidence',
@@ -46,6 +58,16 @@ const navGroups = [
       items: [
           { href: '/evidence-log', label: 'Evidence Log', icon: FileClock },
       ]
+  },
+  {
+    title: 'AI Tools',
+    icon: Wand2,
+    items: [
+        { href: '/ai-tools/schedule-optimizer', label: 'Schedule Optimizer', icon: Wand2 },
+        { href: '/ai-tools/communication-coach', label: 'Communication Coach', icon: Wand2 },
+        { href: '/evidence-ai', label: 'Evidence AI Assistant', icon: FileSearch },
+        { href: '/document-analyzer', label: 'Document Analyzer', icon: FileSearch },
+    ]
   }
 ];
 
@@ -54,7 +76,7 @@ export function SidebarNav() {
   const [openGroups, setOpenGroups] = useState<string[]>(() => {
     const activeGroup = navGroups.find(group => group.items.some(item => pathname.startsWith(item.href)));
     // Default open groups
-    const defaultOpen = ['Daily', 'Health & Info', 'Legal & Evidence'];
+    const defaultOpen = ['Daily', 'Communication', 'Health & Info', 'Legal & Evidence', 'AI Tools'];
     if (activeGroup && !defaultOpen.includes(activeGroup.title)) {
         return [...defaultOpen, activeGroup.title];
     }
