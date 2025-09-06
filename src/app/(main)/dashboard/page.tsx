@@ -1,10 +1,15 @@
 // src/app/(main)/dashboard/page.tsx
+'use client';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Baby, Calendar, FileClock, HeartPulse, Stethoscope, BookHeart, TrendingUp, Utensils, BedDouble, PlusCircle } from 'lucide-react';
+import { Baby, Calendar, FileClock, HeartPulse, Stethoscope, BookHeart, TrendingUp, Utensils, BedDouble, PlusCircle, ListChecks } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { format, differenceInMonths } from 'date-fns';
+import { Calendar as MiniCalendar } from '@/components/ui/calendar';
+import React from 'react';
+import { Badge } from '@/components/ui/badge';
 
 export const metadata: Metadata = {
   title: "Dashboard | Harper's Home",
@@ -21,7 +26,7 @@ const recentLogs = [
 ];
 
 const upcomingAppointments = [
-    { date: new Date("2024-09-25"), icon: Stethoscope, title: "10-Month Well-Child Visit", doctor: "Dr. Emily Carter" },
+    { date: new Date(new Date().setDate(new Date().getDate() + 5)), icon: Stethoscope, title: "10-Month Well-Child Visit", doctor: "Dr. Emily Carter" },
 ];
 
 const recentMilestones = [
@@ -35,6 +40,7 @@ const quickLinks = [
     { href: "/milestones", icon: TrendingUp, title: "Milestones", description: "See developmental progress." },
     { href: "/journal", icon: BookHeart, title: "Family Journal", description: "Share precious moments." },
     { href: "/calendar", icon: Calendar, title: "Family Calendar", description: "Coordinate schedules." },
+    { href: "/shared-lists", icon: ListChecks, title: "Shared Lists", description: "Groceries & wishlists." },
     { href: "/evidence-log", icon: FileClock, title: "Evidence Log", description: "Record important events." },
 ];
 
@@ -71,7 +77,7 @@ const InfantDashboard = () => (
             </Card>
              <Card>
                 <CardHeader>
-                    <CardTitle>Upcoming Appointments</CardTitle>
+                    <CardTitle>Upcoming</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <ul className="space-y-4">
@@ -87,23 +93,32 @@ const InfantDashboard = () => (
                                 </div>
                             </li>
                         ))}
+                         <li className="flex items-start gap-4">
+                            <div className="p-3 bg-primary/10 rounded-lg mt-1">
+                                <Calendar className="w-5 h-5 text-primary" />
+                            </div>
+                            <div>
+                                <p className="font-semibold">Next Custody Exchange</p>
+                                <p className="text-sm text-muted-foreground">with Mom</p>
+                                <p className="text-xs text-muted-foreground/80">{format(new Date(new Date().setDate(new Date().getDate() + 2)), 'EEEE, MMM d')}</p>
+                            </div>
+                        </li>
                     </ul>
                 </CardContent>
             </Card>
         </div>
 
-        {/* Column 2: Quick Links */}
+        {/* Column 2: Quick Links & Mini Calendar */}
         <div className="space-y-6 lg:col-span-1">
-             <Card className="h-full">
+             <Card>
                 <CardHeader>
                     <CardTitle>Quick Links</CardTitle>
-                    <CardDescription>Navigate to key sections.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <ul className="divide-y">
                         {quickLinks.map((link) => (
                             <li key={link.href}>
-                                <Link href={link.href} className="flex items-center gap-4 p-4 -mx-4 hover:bg-accent/50 rounded-lg transition-colors">
+                                <Link href={link.href} className="flex items-center gap-4 p-3 -mx-3 hover:bg-accent/50 rounded-lg transition-colors">
                                     <div className="p-3 bg-muted rounded-lg">
                                         <link.icon className="w-5 h-5 text-muted-foreground" />
                                     </div>
@@ -119,12 +134,32 @@ const InfantDashboard = () => (
              </Card>
         </div>
 
-         {/* Column 3: Milestones */}
+         {/* Column 3: Mini Calendar & Milestones */}
         <div className="space-y-6 lg:col-span-1">
+             <Card>
+                <CardContent className="p-0">
+                    <MiniCalendar
+                        mode="single"
+                        selected={new Date()}
+                        className="p-3"
+                        modifiers={{
+                            custody_mom: (day: Date) => day.getDay() % 3 === 0, // Mocking some custody days
+                            custody_dad: (day: Date) => day.getDay() % 3 === 1, // Mocking some custody days
+                        }}
+                        modifiersClassNames={{
+                            custody_mom: 'bg-pink-100 dark:bg-pink-900/50',
+                            custody_dad: 'bg-blue-100 dark:bg-blue-900/50',
+                        }}
+                    />
+                </CardContent>
+                 <CardContent className="flex justify-center gap-4 text-xs">
+                    <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-pink-100 border"/>Mom's Time</div>
+                    <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-blue-100 border"/>Dad's Time</div>
+                 </CardContent>
+             </Card>
              <Card>
                 <CardHeader>
                     <CardTitle>Recent Milestones</CardTitle>
-                    <CardDescription>Celebrating the latest achievements.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <ul className="space-y-4">

@@ -4,7 +4,7 @@
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import {
-    Home, Calendar, BookHeart, Landmark, TrendingUp, Baby, Heart, AlertTriangle, Users, MessagesSquare, ScanLine, FileSearch, ChevronDown, LayoutDashboard, HeartPulse, Gavel, FileClock, Wand2
+    Home, Calendar, BookHeart, Landmark, TrendingUp, Baby, Heart, AlertTriangle, Users, MessagesSquare, ScanLine, FileSearch, ChevronDown, LayoutDashboard, HeartPulse, Gavel, FileClock, Wand2, ListChecks
 } from 'lucide-react';
 import {
     SidebarMenu,
@@ -25,6 +25,7 @@ const navGroups = [
       { href: '/journal', label: 'Journal', icon: BookHeart },
       { href: '/log', label: "Harper's Log", icon: Baby },
       { href: '/milestones', label: 'Milestones', icon: TrendingUp },
+      { href: '/shared-lists', label: 'Shared Lists', icon: ListChecks },
     ],
   },
   {
