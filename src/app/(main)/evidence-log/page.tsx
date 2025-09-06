@@ -28,6 +28,8 @@ const eventSchema = z.object({
   category: z.enum(categories),
   description: z.string().min(10, 'Please provide a detailed, factual description.'),
   evidence: z.string().optional(),
+  partiesInvolved: z.string().optional(),
+  userResponse: z.string().optional(),
 });
 
 type EventEntry = z.infer<typeof eventSchema> & { loggedBy: string };
@@ -39,7 +41,9 @@ const initialEvents: EventEntry[] = [
         category: "Communication",
         description: "Received a text message regarding a change in pickup time for Saturday.",
         evidence: "Screenshot of text message saved.",
-        loggedBy: "Mom (Emma)"
+        loggedBy: "Mom (Emma)",
+        partiesInvolved: "Mom (Emma)",
+        userResponse: "Agreed to the new time."
     },
     {
         date: new Date("2023-11-08T15:30:00Z"),
@@ -53,14 +57,17 @@ const initialEvents: EventEntry[] = [
         category: "Custody Exchange",
         description: "Dad was 15 minutes late for the custody exchange at the library.",
         evidence: "Documented time of arrival.",
-        loggedBy: "Mom (Emma)"
+        loggedBy: "Mom (Emma)",
+        partiesInvolved: "Dad (Craig)",
+        userResponse: "Sent a text to confirm his ETA."
     },
     {
         date: new Date("2023-10-25T09:00:00Z"),
         category: "Health",
         description: "Took Harper to her annual check-up. Doctor noted she is healthy.",
         evidence: "Check-up summary from Dr. Carter's office.",
-        loggedBy: "Dad (Craig)"
+        loggedBy: "Dad (Craig)",
+        partiesInvolved: "Dad (Craig), Dr. Carter"
     }
 ];
 
@@ -83,6 +90,8 @@ function EvidenceLogPageInternal() {
             category: 'Communication',
             description: '',
             evidence: '',
+            partiesInvolved: '',
+            userResponse: '',
         },
     });
 
@@ -231,12 +240,38 @@ function EvidenceLogPageInternal() {
                                     </FormItem>
                                   )}
                                 />
+                                <FormField
+                                  control={form.control}
+                                  name="partiesInvolved"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Parties Involved (Optional)</FormLabel>
+                                      <FormControl>
+                                        <Input placeholder="e.g., Jane Doe, Officer Smith" {...field} />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={form.control}
+                                  name="userResponse"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Your Response (Optional)</FormLabel>
+                                      <FormControl>
+                                        <Textarea rows={3} placeholder="e.g., Sent text to confirm new time..." {...field} />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
                                  <FormField
                                   control={form.control}
                                   name="evidence"
                                   render={({ field }) => (
                                     <FormItem>
-                                      <FormLabel>Supporting Evidence</FormLabel>
+                                      <FormLabel>Supporting Evidence (Optional)</FormLabel>
                                       <FormControl>
                                         <Textarea rows={3} placeholder="e.g., Text message screenshot saved on 11/10/23..." {...field} />
                                       </FormControl>
@@ -300,6 +335,16 @@ function EvidenceLogPageInternal() {
                                         <p className="text-sm text-muted-foreground">{format(event.date, 'PPP p')}</p>
                                         <p className="font-semibold text-lg">{event.category}</p>
                                         <p className="mt-1 whitespace-pre-wrap text-sm">{event.description}</p>
+                                        {event.partiesInvolved && (
+                                            <div className="text-sm mt-2 text-muted-foreground">
+                                                <span className="font-semibold">Parties Involved:</span> {event.partiesInvolved}
+                                            </div>
+                                        )}
+                                         {event.userResponse && (
+                                            <div className="text-sm mt-2 text-muted-foreground">
+                                                <span className="font-semibold">My Response:</span> {event.userResponse}
+                                            </div>
+                                        )}
                                         {event.evidence && (
                                             <div className="text-sm mt-2 text-muted-foreground bg-accent/50 p-2 rounded-md">
                                                 <span className="font-semibold">Evidence Note:</span> {event.evidence}
