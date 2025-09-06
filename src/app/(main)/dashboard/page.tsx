@@ -4,25 +4,20 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Baby, Calendar, FileClock, HeartPulse, Stethoscope, BookHeart, TrendingUp, Utensils, BedDouble, PlusCircle, ListChecks } from 'lucide-react';
-import type { Metadata } from 'next';
 import Link from 'next/link';
 import { format, differenceInMonths } from 'date-fns';
 import { Calendar as MiniCalendar } from '@/components/ui/calendar';
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 
-export const metadata: Metadata = {
-  title: "Dashboard | Harper's Home",
-};
-
 // --- Data based on Harper being 10 months old ---
 const harper_dob = new Date("2023-11-12"); // Set to make her ~10 months old in Sept 2024
 
 // --- Mock Data for Infant Dashboard ---
 const recentLogs = [
-    { time: "1:30 PM", type: "Sleep", icon: BedDouble, details: "Woke up from nap" },
-    { time: "12:00 PM", type: "Feeding", icon: Utensils, details: "Ate solid foods (peas)" },
-    { time: "11:00 AM", type: "Sleep", icon: BedDouble, details: "Started nap" },
+    { time: "13:30", type: "Sleep", icon: BedDouble, details: "Woke up from nap" },
+    { time: "12:00", type: "Feeding", icon: Utensils, details: "Ate solid foods (peas)" },
+    { time: "11:00", type: "Sleep", icon: BedDouble, details: "Started nap" },
 ];
 
 const upcomingAppointments = [
