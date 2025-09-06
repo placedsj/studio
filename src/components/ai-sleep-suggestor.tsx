@@ -12,6 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Loader2, Wand2, Forward } from 'lucide-react';
 import { Textarea } from './ui/textarea';
+import { differenceInMonths } from 'date-fns';
 
 const formSchema = z.object({
   ageInMonths: z.coerce.number().min(0, 'Age must be a positive number.'),
@@ -22,6 +23,8 @@ interface AiSleepSuggestorProps {
     recentLogs: string;
 }
 
+const harper_dob = new Date("2024-11-12");
+
 export function AiSleepSuggestor({ recentLogs }: AiSleepSuggestorProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<SuggestSleepScheduleOutput | null>(null);
@@ -30,7 +33,7 @@ export function AiSleepSuggestor({ recentLogs }: AiSleepSuggestorProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      ageInMonths: 3,
+      ageInMonths: differenceInMonths(new Date("2025-09-06T00:00:00Z"), harper_dob),
       desiredSchedule: '',
     },
   });
