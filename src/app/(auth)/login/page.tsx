@@ -108,7 +108,7 @@ export default function LoginPage() {
             </form>
           </Form>
           <Separator className="my-4" />
-           <Button variant="secondary" className="w-full" onClick={handleGuestMode}>
+           <Button variant="outline" className="w-full" onClick={handleGuestMode}>
                 Continue as Guest
             </Button>
           <div className="mt-4 text-center text-sm">
