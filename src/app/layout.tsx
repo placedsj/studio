@@ -3,16 +3,17 @@ import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from '@/hooks/use-auth';
-import { Playfair_Display } from 'next/font/google'
+import { Caveat } from 'next/font/google'
 
 export const metadata: Metadata = {
   title: "Harper's Home",
   description: 'A collaborative space for modern co-parenting.',
 };
 
-const playfair = Playfair_Display({
+const caveat = Caveat({
   subsets: ['latin'],
-  variable: '--font-playfair',
+  variable: '--font-caveat',
+  weight: ['400', '700'],
 })
 
 export default function RootLayout({
@@ -28,7 +29,7 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet" />
       </head>
-      <body className={`font-body antialiased ${playfair.variable}`}>
+      <body className={`font-body antialiased ${caveat.variable}`}>
         <AuthProvider>
           {children}
         </AuthProvider>

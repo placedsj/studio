@@ -11,7 +11,7 @@ export default {
     extend: {
       fontFamily: {
         body: ['"PT Sans"', 'sans-serif'],
-        headline: ['var(--font-playfair)', 'serif'],
+        headline: ['var(--font-caveat)', 'sans-serif'],
         code: ['"Source Code Pro"', 'monospace'],
       },
       colors: {
