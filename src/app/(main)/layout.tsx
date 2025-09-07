@@ -42,7 +42,7 @@ export default function AppLayout({
             </Link>
           </Button>
         </SidebarHeader>
-        <SidebarContent>
+        <SidebarContent className="p-2 pr-0">
           <SidebarNav />
         </SidebarContent>
         <SidebarFooter className="p-2">
