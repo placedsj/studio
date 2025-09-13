@@ -28,6 +28,13 @@ const aiToolsItems = [
     { href: '/ai-tools/communication-coach', label: 'Communication Coach' },
 ];
 
+const childFocusedItems = [
+    { href: '/health', label: 'Health Hub' },
+    { href: '/milestones', label: 'Milestones' },
+    { href: '/shared-lists', label: 'Shared Lists' },
+    { href: '/family-tree', label: 'Family Tree' },
+]
+
 export function MainNav({
   className,
   ...props
@@ -56,6 +63,17 @@ export function MainNav({
             <Button variant="ghost" className="text-sm font-medium text-muted-foreground hover:text-primary p-0 h-auto">More</Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56" align="start" forceMount>
+            <DropdownMenuLabel>Child-Focused</DropdownMenuLabel>
+            <DropdownMenuGroup>
+                 {childFocusedItems.map((item) => (
+                    <Link href={item.href} key={item.href} passHref>
+                        <DropdownMenuItem>
+                            {item.label}
+                        </DropdownMenuItem>
+                    </Link>
+                ))}
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
             <DropdownMenuLabel>Legal & Evidence</DropdownMenuLabel>
             <DropdownMenuGroup>
                  {legalEvidenceItems.map((item) => (
