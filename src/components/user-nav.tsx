@@ -60,10 +60,7 @@ export function UserNav() {
           <DropdownMenuItem onClick={() => router.push('/profile')}>
             Profile
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => router.push('/evidence-log')}>
-            Evidence Log
-          </DropdownMenuItem>
-           <DropdownMenuItem onClick={() => router.push('/emergency')}>
+          <DropdownMenuItem onClick={() => router.push('/emergency')}>
             Emergency
           </DropdownMenuItem>
         </DropdownMenuGroup>
