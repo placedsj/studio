@@ -1,4 +1,3 @@
-
 // src/app/(auth)/login/page.tsx
 'use client';
 
@@ -7,14 +6,13 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from "@/components/ui/input";
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/use-auth';
 import Link from "next/link";
 import { Loader2 } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
 import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
@@ -57,68 +55,20 @@ export default function LoginPage() {
 
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <Card className="mx-auto max-w-sm">
-        <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
-          <CardDescription>
-            Enter your email below to login to your account
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="m@example.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="flex items-center">
-                      <FormLabel>Password</FormLabel>
-                      <Link
-                        href="#"
-                        className="ml-auto inline-block text-sm underline"
-                      >
-                        Forgot your password?
-                      </Link>
-                    </div>
-                    <FormControl>
-                      <Input type="password" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading && <Loader2 className="animate-spin" />}
-                <span>Login</span>
-              </Button>
-            </form>
-          </Form>
-          <Separator className="my-4" />
-           <Button variant="outline" className="w-full" onClick={handleGuestMode}>
-                Continue as Guest
-            </Button>
-          <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{" "}
-            <Link href="/signup" className="underline">
-              Sign up
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="w-full max-w-md space-y-8">
+        <div className="text-center">
+            <h1 className="text-4xl font-bold font-headline tracking-tight">Harper's Home</h1>
+            <p className="text-muted-foreground mt-2">Please select your access type to continue.</p>
+        </div>
+        <div className="space-y-4">
+          <Button onClick={() => router.push('/login-form')} size="lg" className="w-full">
+            Parent Login
+          </Button>
+          <Button onClick={handleGuestMode} size="lg" variant="secondary" className="w-full">
+            Team & Guest Access
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

@@ -2,177 +2,84 @@
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Baby, Calendar, FileClock, HeartPulse, Stethoscope, BookHeart, TrendingUp, Utensils, BedDouble, PlusCircle, ListChecks } from 'lucide-react';
-import Link from 'next/link';
 import { format, differenceInMonths } from 'date-fns';
-import { Calendar as MiniCalendar } from '@/components/ui/calendar';
-import React from 'react';
-import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Utensils, BedDouble, Baby } from 'lucide-react';
 
 // --- Data based on Harper being 10 months old as of Sept 6, 2025 ---
 const harper_dob = new Date("2024-11-12");
 
-// --- Mock Data for Infant Dashboard ---
-const recentLogs = [
-    { time: "13:30", type: "Sleep", icon: BedDouble, details: "Woke up from nap" },
-    { time: "12:00", type: "Feeding", icon: Utensils, details: "Ate solid foods (peas)" },
-    { time: "11:00", type: "Sleep", icon: BedDouble, details: "Started nap" },
-];
-
-const upcomingAppointments = [
-    { date: new Date("2025-09-11T00:00:00Z"), icon: Stethoscope, title: "10-Month Well-Child Visit", doctor: "Dr. Emily Carter" },
-];
-
-const recentMilestones = [
-    { title: "Started Crawling", date: new Date("2025-08-15") },
-    { title: "First Solid Foods", date: new Date("2025-06-20") },
-];
-
-const quickLinks = [
-    { href: "/log", icon: Baby, title: "Harper's Log", description: "Track daily activities." },
-    { href: "/health", icon: HeartPulse, title: "Health Hub", description: "View medical records." },
-    { href: "/milestones", icon: TrendingUp, title: "Milestones", description: "See developmental progress." },
-    { href: "/journal", icon: BookHeart, title: "Family Journal", description: "Share precious moments." },
-    { href: "/calendar", icon: Calendar, title: "Family Calendar", description: "Coordinate schedules." },
-    { href: "/shared-lists", icon: ListChecks, title: "Shared Lists", description: "Groceries & wishlists." },
-    { href: "/evidence-log", icon: FileClock, title: "Evidence Log", description: "Record important events." },
-];
-
-
 // --- Infant Dashboard Component (0-24 months) ---
 const InfantDashboard = () => (
-    <div className="grid gap-6 lg:grid-cols-3">
-        {/* Column 1: Recent Logs & Appointments */}
-        <div className="space-y-6 lg:col-span-1">
+    <div className="space-y-4">
+       <h2 className="text-3xl font-bold tracking-tight">Welcome to Harper's Home!</h2>
+       <p className="text-muted-foreground">Your one-stop dashboard for our amazing gal.</p>
+
+        <Card className="bg-primary text-primary-foreground">
+            <CardHeader>
+                <CardTitle>Harper's Now: At-a-Glance</CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-3 gap-4">
+                <div className="text-center">
+                    <p className="text-sm font-semibold">LAST FEED</p>
+                    <p className="text-2xl font-bold">08:00 AM</p>
+                    <p className="text-xs opacity-80">45 mins ago</p>
+                </div>
+                 <div className="text-center">
+                    <p className="text-sm font-semibold">LAST NAP</p>
+                    <p className="text-2xl font-bold">09:11 AM</p>
+                    <p className="text-xs opacity-80">For 45 mins</p>
+                </div>
+                 <div className="text-center">
+                    <p className="text-sm font-semibold">LAST DIAPER</p>
+                    <p className="text-2xl font-bold">08:30 AM</p>
+                    <p className="text-xs opacity-80">Wet</p>
+                </div>
+            </CardContent>
+        </Card>
+
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <Card>
                 <CardHeader>
-                    <CardTitle>Recent Activity</CardTitle>
-                    <CardDescription>From Harper's Log.</CardDescription>
+                    <CardTitle>Up Next</CardTitle>
                 </CardHeader>
-                <CardContent>
-                    <ul className="space-y-4">
-                        {recentLogs.map((log, index) => (
-                             <li key={index} className="flex items-start gap-4">
-                                <div className="p-3 bg-muted rounded-lg mt-1">
-                                    <log.icon className="w-5 h-5 text-muted-foreground" />
-                                </div>
-                                <div>
-                                    <p className="font-semibold">{log.type}</p>
-                                    <p className="text-sm text-muted-foreground">{log.details}</p>
-                                    <p className="text-xs text-muted-foreground/80">{log.time}</p>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                     <Button asChild className="w-full mt-4">
-                        <Link href="/log"><PlusCircle /><span>Add to Log</span></Link>
-                    </Button>
+                <CardContent className="space-y-4">
+                   <div className="flex items-center gap-4">
+                       <Utensils className="w-6 h-6 text-primary"/>
+                       <div>
+                           <p className="font-semibold">Next Feeding</p>
+                           <p className="text-muted-foreground text-sm">Around 11:00 AM</p>
+                       </div>
+                   </div>
+                   <div className="flex items-center gap-4">
+                       <BedDouble className="w-6 h-6 text-primary"/>
+                       <div>
+                           <p className="font-semibold">Next Nap</p>
+                           <p className="text-muted-foreground text-sm">Around 11:30 AM</p>
+                       </div>
+                   </div>
+                </CardContent>
+            </Card>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Harper's Profile</CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-col items-center text-center">
+                    <Avatar className="w-20 h-20 mb-2">
+                        <AvatarImage src="https://picsum.photos/seed/harper/200" data-ai-hint="child portrait" />
+                        <AvatarFallback>H</AvatarFallback>
+                    </Avatar>
+                    <p className="font-semibold">Harper</p>
+                    <p className="text-sm text-muted-foreground">7M 22D</p>
+                    <p className="text-xs text-muted-foreground">{format(harper_dob, "MMMM d, yyyy")}</p>
                 </CardContent>
             </Card>
              <Card>
                 <CardHeader>
-                    <CardTitle>Upcoming</CardTitle>
+                    <CardTitle>Latest Story</CardTitle>
                 </CardHeader>
-                <CardContent>
-                    <ul className="space-y-4">
-                        {upcomingAppointments.map((event, index) => (
-                             <li key={index} className="flex items-start gap-4">
-                                <div className="p-3 bg-primary/10 rounded-lg mt-1">
-                                    <event.icon className="w-5 h-5 text-primary" />
-                                </div>
-                                <div>
-                                    <p className="font-semibold">{event.title}</p>
-                                    <p className="text-sm text-muted-foreground">with {event.doctor}</p>
-                                    <p className="text-xs text-muted-foreground/80">{format(event.date, 'EEEE, MMM d')}</p>
-                                </div>
-                            </li>
-                        ))}
-                         <li className="flex items-start gap-4">
-                            <div className="p-3 bg-primary/10 rounded-lg mt-1">
-                                <Calendar className="w-5 h-5 text-primary" />
-                            </div>
-                            <div>
-                                <p className="font-semibold">Next Custody Exchange</p>
-                                <p className="text-sm text-muted-foreground">with Mom</p>
-                                <p className="text-xs text-muted-foreground/80">{format(new Date("2025-09-08T00:00:00Z"), 'EEEE, MMM d')}</p>
-                            </div>
-                        </li>
-                    </ul>
-                </CardContent>
-            </Card>
-        </div>
-
-        {/* Column 2: Quick Links & Mini Calendar */}
-        <div className="space-y-6 lg:col-span-1">
-             <Card>
-                <CardHeader>
-                    <CardTitle>Quick Links</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <ul className="divide-y">
-                        {quickLinks.map((link) => (
-                            <li key={link.href}>
-                                <Link href={link.href} className="flex items-center gap-4 p-3 -mx-3 hover:bg-accent/50 rounded-lg transition-colors">
-                                    <div className="p-3 bg-muted rounded-lg">
-                                        <link.icon className="w-5 h-5 text-muted-foreground" />
-                                    </div>
-                                    <div>
-                                        <p className="font-semibold">{link.title}</p>
-                                        <p className="text-sm text-muted-foreground">{link.description}</p>
-                                    </div>
-                                </Link>
-                            </li>
-                        ))}
-                    </ul>
-                </CardContent>
-             </Card>
-        </div>
-
-         {/* Column 3: Mini Calendar & Milestones */}
-        <div className="space-y-6 lg:col-span-1">
-             <Card>
-                <CardContent className="p-0">
-                    <MiniCalendar
-                        mode="single"
-                        selected={new Date("2025-09-06T00:00:00Z")}
-                        className="p-3"
-                        modifiers={{
-                            custody_mom: (day: Date) => day.getDay() % 3 === 0, // Mocking some custody days
-                            custody_dad: (day: Date) => day.getDay() % 3 === 1, // Mocking some custody days
-                        }}
-                        modifiersClassNames={{
-                            custody_mom: 'bg-pink-100 dark:bg-pink-900/50',
-                            custody_dad: 'bg-blue-100 dark:bg-blue-900/50',
-                        }}
-                    />
-                </CardContent>
-                 <CardContent className="flex justify-center gap-4 text-xs">
-                    <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-pink-100 border"/>Mom's Time</div>
-                    <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-blue-100 border"/>Dad's Time</div>
-                 </CardContent>
-             </Card>
-             <Card>
-                <CardHeader>
-                    <CardTitle>Recent Milestones</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <ul className="space-y-4">
-                       {recentMilestones.map((milestone, index) => (
-                             <li key={index} className="flex items-start gap-4">
-                                <div className="p-3 bg-accent rounded-lg mt-1">
-                                    <TrendingUp className="w-5 h-5 text-accent-foreground" />
-                                </div>
-                                <div>
-                                    <p className="font-semibold">{milestone.title}</p>
-                                    <p className="text-xs text-muted-foreground/80">{format(milestone.date, 'PPP')}</p>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                     <Button asChild variant="secondary" className="w-full mt-4">
-                        <Link href="/milestones">View all milestones</Link>
-                    </Button>
+                 <CardContent>
+                    <p className="text-sm text-muted-foreground">No new stories yet. Add one from the Journal!</p>
                 </CardContent>
             </Card>
         </div>
@@ -199,20 +106,8 @@ export default function DashboardPage() {
     if (ageInMonths <= 24) {
         DashboardComponent = InfantDashboard;
     } else {
-        // This is where you'd add logic for Toddler, Preschool, etc.
         DashboardComponent = SchoolAgeDashboard;
     }
 
-
-  return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold font-headline uppercase tracking-tight">Welcome Back</h1>
-        <p className="text-muted-foreground mt-1">
-          Here's a quick overview of Harper's world, tailored for her current age.
-        </p>
-      </div>
-      <DashboardComponent />
-    </div>
-  );
+    return <DashboardComponent />;
 }
