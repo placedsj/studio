@@ -119,7 +119,7 @@ export default function CalendarPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold font-headline uppercase tracking-tight">Family Calendar ("Dad's Plan")</h1>
+        <h1 className="text-3xl font-headline font-extra-bold uppercase tracking-tight">Family Calendar ("Dad's Plan")</h1>
         <p className="text-muted-foreground mt-1">
           Coordinate schedules, events, and memories based on the current plan.
         </p>

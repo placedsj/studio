@@ -36,7 +36,7 @@ export default function FundPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold font-headline uppercase tracking-tight">Shared Fund Management</h1>
+        <h1 className="text-3xl font-headline font-extra-bold uppercase tracking-tight">Shared Fund Management</h1>
         <p className="text-muted-foreground mt-1">
           A transparent record of shared expenses for Harper.
         </p>

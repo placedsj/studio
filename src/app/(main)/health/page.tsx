@@ -105,7 +105,7 @@ export default function HealthPage() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
          <div>
-            <h1 className="text-3xl font-bold font-headline uppercase tracking-tight">Health Hub</h1>
+            <h1 className="text-3xl font-headline font-extra-bold uppercase tracking-tight">Health Hub</h1>
             <p className="text-muted-foreground mt-1">
                 Track appointments, immunizations, and medical notes for Harper.
             </p>

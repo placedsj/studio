@@ -77,7 +77,7 @@ export default function EvidenceAiPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold font-headline uppercase tracking-tight">Evidence AI Assistant</h1>
+        <h1 className="text-3xl font-headline font-extra-bold uppercase tracking-tight">Evidence AI Assistant</h1>
         <p className="text-muted-foreground mt-1">
           Upload an image (screenshot, receipt, etc.) to automatically extract text and categorize it.
         </p>

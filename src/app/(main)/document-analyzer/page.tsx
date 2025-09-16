@@ -59,7 +59,7 @@ export default function DocumentAnalyzerPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold font-headline uppercase tracking-tight">Document Analyzer</h1>
+        <h1 className="text-3xl font-headline font-extra-bold uppercase tracking-tight">Document Analyzer</h1>
         <p className="text-muted-foreground mt-1">
           Paste text from emails, PDFs, or other documents to automatically extract key info and categorize it.
         </p>

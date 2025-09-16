@@ -89,7 +89,7 @@ export default function JournalPage() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold font-headline uppercase tracking-tight">Family Journal</h1>
+          <h1 className="text-3xl font-headline font-extra-bold uppercase tracking-tight">Family Journal</h1>
           <p className="text-muted-foreground mt-1">Share precious moments and milestones.</p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

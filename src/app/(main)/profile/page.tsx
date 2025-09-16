@@ -61,7 +61,7 @@ export default function ProfilePage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold font-headline uppercase tracking-tight">Harper's Profile</h1>
+        <h1 className="text-3xl font-headline font-extra-bold uppercase tracking-tight">Harper's Profile</h1>
         <p className="text-muted-foreground mt-1">
           Manage Harper's core information here.
         </p>

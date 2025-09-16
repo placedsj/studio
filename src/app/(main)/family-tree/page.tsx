@@ -51,7 +51,7 @@ export default function FamilyTreePage() {
   return (
     <div className="space-y-8">
         <div>
-            <h1 className="text-3xl font-bold font-headline uppercase tracking-tight">Family Tree</h1>
+            <h1 className="text-3xl font-headline font-extra-bold uppercase tracking-tight">Family Tree</h1>
             <p className="text-muted-foreground mt-1">
                 A visual map of Harper's loving family and support system.
             </p>

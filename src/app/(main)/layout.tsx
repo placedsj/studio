@@ -14,7 +14,7 @@ export default function AppLayout({
     <div className="flex-col md:flex">
         <div className="border-b">
           <div className="flex h-16 items-center px-4">
-            <h1 className="text-2xl font-bold font-headline tracking-tight mr-6">Harper's Home</h1>
+            <h1 className="text-2xl font-headline font-extra-bold tracking-tight mr-6">Harper's Home</h1>
             <MainNav className="mx-6" />
             <div className="ml-auto flex items-center space-x-4">
               <UserNav />

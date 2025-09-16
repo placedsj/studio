@@ -3,17 +3,17 @@ import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from '@/hooks/use-auth';
-import { Caveat } from 'next/font/google'
+import { Nunito } from 'next/font/google'
 
 export const metadata: Metadata = {
   title: "Harper's Home",
   description: 'A collaborative space for modern co-parenting.',
 };
 
-const caveat = Caveat({
+const nunito = Nunito({
   subsets: ['latin'],
-  variable: '--font-caveat',
-  weight: ['400', '700'],
+  variable: '--font-nunito',
+  weight: ['400', '700', '900'],
 })
 
 export default function RootLayout({
@@ -23,13 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet" />
-      </head>
-      <body className={`font-body antialiased ${caveat.variable}`}>
+      <body className={`font-body antialiased ${nunito.variable}`}>
         <AuthProvider>
           {children}
         </AuthProvider>

@@ -154,7 +154,7 @@ function EvidenceLogPageInternal() {
     return (
     <div className="space-y-8">
         <div>
-            <h1 className="text-3xl font-bold font-headline uppercase tracking-tight">Evidence Log</h1>
+            <h1 className="text-3xl font-headline font-extra-bold uppercase tracking-tight">Evidence Log</h1>
             <p className="text-muted-foreground mt-1">
                 A secure and chronological record of co-parenting events.
             </p>

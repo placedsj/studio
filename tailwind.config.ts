@@ -17,9 +17,11 @@ export default {
     },
     extend: {
       fontFamily: {
-        body: ['"PT Sans"', 'sans-serif'],
-        headline: ['var(--font-caveat)', 'sans-serif'],
-        code: ['"Source Code Pro"', 'monospace'],
+        body: ['var(--font-nunito)', 'sans-serif'],
+        headline: ['var(--font-nunito)', 'sans-serif'],
+      },
+      fontWeight: {
+        'extra-bold': '900',
       },
       colors: {
         background: 'hsl(var(--background))',
