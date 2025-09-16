@@ -13,8 +13,6 @@ const navItems = [
     { href: '/dashboard', label: 'Dashboard' },
     { href: '/log', label: 'Daily Care' },
     { href: '/calendar', label: 'Calendar' },
-    { href: '/journal', label: 'Journal' },
-    { href: '/fund', label: 'Fund' },
     { href: '/communication', label: 'Chat' },
 ];
 
@@ -30,6 +28,8 @@ const aiToolsItems = [
 ];
 
 const childFocusedItems = [
+    { href: '/journal', label: 'Journal' },
+    { href: '/fund', label: 'Fund' },
     { href: '/health', label: 'Health Hub' },
     { href: '/milestones', label: 'Milestones' },
     { href: '/shared-lists', label: 'Shared Lists' },
