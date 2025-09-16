@@ -27,6 +27,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { journalEntries as initialEntries, type JournalEntry } from '@/lib/journal-data';
 
 const entrySchema = z.object({
   title: z.string().min(1, 'Title is required.'),
@@ -36,24 +37,6 @@ const entrySchema = z.object({
   dataAiHint: z.string().optional(),
 });
 
-type JournalEntry = z.infer<typeof entrySchema>;
-
-const initialEntries: JournalEntry[] = [
-    {
-      title: "Harper's First Soccer Goal!",
-      date: new Date("2025-08-26"),
-      content: "So proud of Harper today! She scored her very first goal in the game against the Blue Jays. Her face lit up with so much joy. It was a beautiful moment.",
-      image: "https://picsum.photos/400/200",
-      dataAiHint: "soccer goal"
-    },
-    {
-      title: "Visit to the Science Museum",
-      date: new Date("2025-08-15"),
-      content: "We had a fantastic day exploring the science museum. Harper was fascinated by the dinosaur exhibit and the planetarium show. A day full of curiosity and learning.",
-      image: "https://picsum.photos/400/201",
-      dataAiHint: "science museum"
-    }
-];
 
 export default function JournalPage() {
     const [entries, setEntries] = React.useState<JournalEntry[]>(initialEntries);
