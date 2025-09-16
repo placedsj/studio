@@ -8,40 +8,41 @@ export const metadata: Metadata = {
 };
 
 const familyMembers = {
-    harper: { name: "Harper Ryan", dob: "11/12/2024", initials: "HR" },
+    harper: { name: "Harper Ryan", dob: "11/12/2024" },
     parents: [
-        { name: "Dad (Craig)", dob: "03/23/1990", initials: "C", side: 'paternal' },
-        { name: "Mom (Emma)", dob: "12/15/1995", initials: "E", side: 'maternal' },
+        { name: "Dad (Craig)", dob: "03/23/1990", side: 'paternal' },
+        { name: "Mom (Emma)", dob: "12/15/1995", side: 'maternal' },
     ],
     maternalGrandparents: [
-        { name: "Nanny Ryan (Jane)", initials: "JR", side: 'maternal' },
-        { name: "Grampy Ryan (Sonny)", initials: "SR", side: 'maternal' },
+        { name: "Nanny Ryan (Jane)", side: 'maternal' },
+        { name: "Grampy Ryan (Sonny)", side: 'maternal' },
     ],
     paternalGrandparents: [
-        { name: "Grammy Campbell (Stacey)", initials: "SC", side: 'paternal' },
+        { name: "Grammy Campbell (Stacey)", side: 'paternal' },
     ],
-    maternalAuntsUncles: [],
+    maternalAuntsUncles: [
+        { name: "Aunt Amber", side: 'maternal' },
+        { name: "Aunt Marissa", side: 'maternal' },
+        { name: "Uncle Nick", side: 'maternal' },
+        { name: "Uncle Matt", side: 'maternal' },
+    ],
     paternalAuntsUncles: [
-        { name: "Uncle Nick", initials: "UN", side: 'paternal' },
-        { name: "Uncle Matt", initials: "UM", side: 'paternal' },
-        { name: "Aunt Amber", initials: "AA", side: 'paternal' },
-        { name: "Aunt Marissa", initials: "AM", side: 'paternal' },
     ],
-    maternalCousins: [],
+    maternalCousins: [
+        { name: "Cousin Logan", side: 'maternal' },
+        { name: "Cousin Wyatt", side: 'maternal' },
+    ],
     paternalCousins: [
-        { name: "Cousin Wyatt", initials: "CW", side: 'paternal' },
-        { name: "Cousin Logan", initials: "CL", side: 'paternal' },
     ]
 };
 
 type FamilyMember = {
     name: string;
     dob?: string;
-    initials: string;
     side: 'maternal' | 'paternal';
 };
 
-const FamilyMemberCard = ({ name, dob }: Omit<FamilyMember, 'side' | 'initials'>) => (
+const FamilyMemberCard = ({ name, dob }: Omit<FamilyMember, 'side'>) => (
     <div className="flex flex-col items-center text-center p-2 bg-muted/30 rounded-lg">
         <div className="leading-tight">
             <p className="font-semibold">{name}</p>
