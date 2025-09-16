@@ -1,7 +1,5 @@
 // src/app/(main)/family-tree/page.tsx
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Heart, Users } from 'lucide-react';
 import type { Metadata } from 'next';
 import { cn } from '@/lib/utils';
 
@@ -22,19 +20,17 @@ const familyMembers = {
     paternalGrandparents: [
         { name: "Grammy Campbell (Stacey)", initials: "SC", side: 'paternal' },
     ],
-    maternalAuntsUncles: [
-        { name: "Aunt Amber", initials: "AA", side: 'maternal' },
-        { name: "Aunt Marissa", initials: "AM", side: 'maternal' },
-    ],
+    maternalAuntsUncles: [],
     paternalAuntsUncles: [
         { name: "Uncle Nick", initials: "UN", side: 'paternal' },
         { name: "Uncle Matt", initials: "UM", side: 'paternal' },
+        { name: "Aunt Amber", initials: "AA", side: 'paternal' },
+        { name: "Aunt Marissa", initials: "AM", side: 'paternal' },
     ],
-    maternalCousins: [
-        { name: "Cousin Logan", initials: "CL", side: 'maternal' },
-    ],
+    maternalCousins: [],
     paternalCousins: [
         { name: "Cousin Wyatt", initials: "CW", side: 'paternal' },
+        { name: "Cousin Logan", initials: "CL", side: 'paternal' },
     ]
 };
 
@@ -45,17 +41,8 @@ type FamilyMember = {
     side: 'maternal' | 'paternal';
 };
 
-const FamilyMemberCard = ({ name, dob, initials, side }: FamilyMember) => (
-    <div className="flex flex-col items-center text-center gap-2">
-        <Avatar className={cn(
-            "w-16 h-16 mb-2 border-4",
-            side === 'maternal' ? 'border-accent/50' : 'border-primary/50'
-        )}>
-            <AvatarFallback className={cn(
-                "font-bold text-xl",
-                side === 'maternal' ? 'bg-accent/20 text-accent-foreground' : 'bg-primary/20 text-primary'
-            )}>{initials}</AvatarFallback>
-        </Avatar>
+const FamilyMemberCard = ({ name, dob }: Omit<FamilyMember, 'side' | 'initials'>) => (
+    <div className="flex flex-col items-center text-center p-2 bg-muted/30 rounded-lg">
         <div className="leading-tight">
             <p className="font-semibold">{name}</p>
             {dob && <p className="text-xs text-muted-foreground">{dob}</p>}
@@ -63,17 +50,20 @@ const FamilyMemberCard = ({ name, dob, initials, side }: FamilyMember) => (
     </div>
 );
 
-const FamilyBranch = ({ title, members, side }: { title: string, members: Omit<FamilyMember, 'side'>[], side: 'maternal' | 'paternal' }) => (
-    <div className="space-y-2">
-        <h3 className={cn(
-            "font-semibold text-center text-sm uppercase tracking-wider pb-1 border-b-2",
-            side === 'maternal' ? 'border-accent text-accent-foreground' : 'border-primary text-primary'
-        )}>{title}</h3>
-        <div className="flex justify-center flex-wrap gap-4 pt-2">
-            {members.map(member => <FamilyMemberCard key={member.name} {...member} side={side} />)}
+const FamilyBranch = ({ title, members, side }: { title: string, members: Omit<FamilyMember, 'side'>[], side: 'maternal' | 'paternal' }) => {
+    if (members.length === 0) return null;
+    return (
+        <div className="space-y-2">
+            <h3 className={cn(
+                "font-semibold text-center text-sm uppercase tracking-wider pb-1 border-b-2",
+                side === 'maternal' ? 'border-accent text-accent-foreground' : 'border-primary text-primary'
+            )}>{title}</h3>
+            <div className="flex justify-center flex-wrap gap-4 pt-2">
+                {members.map(member => <FamilyMemberCard key={member.name} {...member} />)}
+            </div>
         </div>
-    </div>
-);
+    );
+}
 
 export default function FamilyTreePage() {
   return (
@@ -88,10 +78,7 @@ export default function FamilyTreePage() {
         <div className="space-y-12 flex flex-col items-center">
             {/* Harper */}
              <div className="flex flex-col items-center text-center">
-                <Avatar className="w-24 h-24 mb-2 border-4 border-yellow-400">
-                     <AvatarFallback className="font-bold text-3xl bg-yellow-100 text-yellow-600">{familyMembers.harper.initials}</AvatarFallback>
-                </Avatar>
-                <div className="leading-tight">
+                 <div className="leading-tight p-4 bg-yellow-100 border-2 border-yellow-300 rounded-lg">
                     <p className="font-bold text-xl">{familyMembers.harper.name}</p>
                     <p className="text-sm text-muted-foreground">{familyMembers.harper.dob}</p>
                 </div>
@@ -121,7 +108,7 @@ export default function FamilyTreePage() {
                     </CardHeader>
                     <CardContent className="space-y-6">
                         <FamilyBranch title="Grandparents" members={familyMembers.paternalGrandparents} side="paternal" />
-                        <FamilyBranch title="Uncles" members={familyMembers.paternalAuntsUncles} side="paternal" />
+                        <FamilyBranch title="Aunts & Uncles" members={familyMembers.paternalAuntsUncles} side="paternal" />
                         <FamilyBranch title="Cousins" members={familyMembers.paternalCousins} side="paternal" />
                     </CardContent>
                 </Card>
@@ -132,8 +119,8 @@ export default function FamilyTreePage() {
                     </CardHeader>
                     <CardContent className="space-y-6">
                        <FamilyBranch title="Grandparents" members={familyMembers.maternalGrandparents} side="maternal" />
-                        <FamilyBranch title="Aunts" members={familyMembers.maternalAuntsUncles} side="maternal" />
-                        <FamilyBranch title="Cousins" members={familyMembers.maternalCousins} side="maternal" />
+                       <FamilyBranch title="Aunts & Uncles" members={familyMembers.maternalAuntsUncles} side="maternal" />
+                       <FamilyBranch title="Cousins" members={familyMembers.maternalCousins} side="maternal" />
                     </CardContent>
                 </Card>
             </div>
