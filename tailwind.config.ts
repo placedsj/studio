@@ -36,6 +36,7 @@ export default {
         },
         primary: {
           DEFAULT: 'hsl(var(--primary))',
+          dark: 'hsl(var(--primary-dark))',
           foreground: 'hsl(var(--primary-foreground))',
         },
         secondary: {
@@ -57,11 +58,14 @@ export default {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
+        mom: 'hsl(var(--mom-day))',
+        dad: 'hsl(var(--dad-day))',
       },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+        xl: 'calc(var(--radius) + 4px)',
       },
       keyframes: {
         'accordion-down': {

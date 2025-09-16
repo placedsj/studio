@@ -107,10 +107,10 @@ export default function CalendarPage() {
   };
   
   const modifiersClassNames = {
-      mom: 'bg-pink-100 text-pink-900 dark:bg-pink-900/50 dark:text-pink-100 rounded-none',
-      dad: 'bg-blue-100 text-blue-900 dark:bg-blue-900/50 dark:text-blue-100 rounded-none',
-      alternate: 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 rounded-none',
-      birthday: 'font-bold border-2 border-primary rounded-full',
+      mom: 'bg-mom text-white rounded-md',
+      dad: 'bg-dad text-white rounded-md',
+      alternate: 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 rounded-md',
+      birthday: 'font-bold border-2 border-accent rounded-full',
   };
 
   const selectedDayEvents = date ? events.filter(e => isSameDay(e.date, date)) : [];
@@ -119,13 +119,13 @@ export default function CalendarPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-headline font-extra-bold uppercase tracking-tight">Family Calendar ("Dad's Plan")</h1>
+        <h1 className="text-3xl font-headline font-extra-bold uppercase tracking-tight">Family Calendar</h1>
         <p className="text-muted-foreground mt-1">
           Coordinate schedules, events, and memories based on the current plan.
         </p>
       </div>
       <div className="grid gap-8 md:grid-cols-3">
-        <Card className="md:col-span-2">
+        <Card className="md:col-span-2 shadow-lg hover:shadow-xl transition-shadow duration-300">
           <CardContent className="p-0">
             <Calendar
               mode="single"
@@ -144,11 +144,11 @@ export default function CalendarPage() {
                 </CardHeader>
                 <CardContent className="space-y-3">
                     <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 rounded-full bg-pink-100 border"></div>
+                        <div className="w-4 h-4 rounded-full bg-mom"></div>
                         <span className="text-sm font-medium">{custodyParents.mom.name}'s Time</span>
                     </div>
                      <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 rounded-full bg-blue-100 border"></div>
+                        <div className="w-4 h-4 rounded-full bg-dad"></div>
                         <span className="text-sm font-medium">{custodyParents.dad.name}'s Time</span>
                     </div>
                      <div className="flex items-center gap-2">
@@ -156,8 +156,8 @@ export default function CalendarPage() {
                         <span className="text-sm font-medium">{custodyParents.alternate.name}</span>
                     </div>
                      <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 rounded-full border-2 border-primary flex items-center justify-center">
-                            <Cake className="w-2.5 h-2.5 text-primary" />
+                        <div className="w-4 h-4 rounded-full border-2 border-accent flex items-center justify-center">
+                            <Cake className="w-2.5 h-2.5 text-accent" />
                         </div>
                         <span className="text-sm font-medium">Birthday</span>
                     </div>
@@ -185,8 +185,8 @@ export default function CalendarPage() {
                                         </div>
                                     )}
                                     {event.type === 'birthday' && (
-                                         <div className="p-2 bg-primary/20 rounded-full">
-                                            <Cake className="w-4 h-4 text-primary" />
+                                         <div className="p-2 bg-accent/20 rounded-full">
+                                            <Cake className="w-4 h-4 text-accent" />
                                         </div>
                                     )}
                                     <span className="text-sm font-medium">{event.title}</span>

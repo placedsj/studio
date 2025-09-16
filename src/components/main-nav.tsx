@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils"
 import { ComponentProps } from "react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
+import { ChevronDown } from "lucide-react";
 
 const navItems = [
     { href: '/dashboard', label: 'Dashboard' },
@@ -43,7 +44,7 @@ export function MainNav({
 
   return (
     <nav
-      className={cn("flex items-center space-x-4 lg:space-x-6", className)}
+      className={cn("hidden md:flex items-center space-x-4 lg:space-x-6", className)}
       {...props}
     >
       {navItems.map((item) => (
@@ -51,16 +52,22 @@ export function MainNav({
           key={item.href}
           href={item.href}
           className={cn(
-              "text-sm font-medium transition-colors hover:text-primary",
+              "text-sm font-medium transition-colors hover:text-primary relative",
               pathname === item.href ? "text-primary" : "text-muted-foreground"
           )}
         >
           {item.label}
+           {pathname === item.href && (
+            <span className="absolute bottom-[-8px] left-0 right-0 h-0.5 bg-primary rounded-full" />
+          )}
         </Link>
       ))}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="text-sm font-medium text-muted-foreground hover:text-primary p-0 h-auto">More</Button>
+            <Button variant="ghost" className="text-sm font-medium text-muted-foreground hover:text-primary p-0 h-auto">
+                More
+                <ChevronDown className="w-4 h-4 ml-1" />
+            </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56" align="start" forceMount>
             <DropdownMenuLabel>Child-Focused</DropdownMenuLabel>
