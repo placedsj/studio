@@ -3,6 +3,7 @@
 
 import { MainNav } from '@/components/main-nav';
 import { UserNav } from '@/components/user-nav';
+import { CoParentingTip } from '@/components/co-parenting-tip';
 
 export default function AppLayout({
   children,
@@ -25,6 +26,9 @@ export default function AppLayout({
         </header>
         <main className="flex-1 space-y-4 p-8 pt-6 container mx-auto">
           {children}
+          <div className="pt-8">
+            <CoParentingTip />
+          </div>
         </main>
     </div>
   );
