@@ -1,6 +1,7 @@
 // src/app/(main)/dashboard/page.tsx
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { format, differenceInMonths } from 'date-fns';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -16,6 +17,11 @@ const harper_dob = new Date("2024-11-12T00:00:00Z");
 // --- Infant Dashboard Component (0-24 months) ---
 const InfantDashboard = () => {
     const latestStory = journalEntries[0];
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     return (
         <div className="space-y-8">
@@ -85,8 +91,12 @@ const InfantDashboard = () => {
                             <AvatarFallback>H</AvatarFallback>
                         </Avatar>
                         <p className="font-semibold text-lg">Harper Ryan</p>
-                        <p className="text-sm text-muted-foreground">{differenceInMonths(new Date(), harper_dob)} months old</p>
-                        <p className="text-xs text-muted-foreground">{format(harper_dob, "MMMM d, yyyy")}</p>
+                        <div className="h-4 text-sm text-muted-foreground">
+                            {isClient && <p>{differenceInMonths(new Date(), harper_dob)} months old</p>}
+                        </div>
+                        <div className="h-3.5 text-xs text-muted-foreground">
+                            {isClient && <p>{format(harper_dob, "MMMM d, yyyy")}</p>}
+                        </div>
                     </CardContent>
                 </Card>
                  <Card>
