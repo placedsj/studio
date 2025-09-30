@@ -81,7 +81,7 @@ const InfantDashboard = () => {
                     </CardHeader>
                     <CardContent className="flex flex-col items-center text-center">
                         <Avatar className="w-20 h-20 mb-4 border-4 border-accent/50">
-                            <AvatarImage src="https://picsum.photos/seed/harper/200" data-ai-hint="child portrait" />
+                            <AvatarImage src="https://images.unsplash.com/photo-1637878314356-9f3b0338bc7c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjaGlsZCUyMHBvcnRyYWl0fGVufDB8fHx8MTc1OTEwNzg4MHww&ixlib=rb-4.1.0&q=80&w=1080" data-ai-hint="child portrait" />
                             <AvatarFallback>H</AvatarFallback>
                         </Avatar>
                         <p className="font-semibold text-lg">Harper Ryan</p>

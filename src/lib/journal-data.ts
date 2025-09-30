@@ -13,7 +13,7 @@ export const journalEntries: JournalEntry[] = [
       title: "Harper's First Soccer Goal!",
       date: new Date("2025-08-26"),
       content: "So proud of Harper today! She scored her very first goal in the game against the Blue Jays. Her face lit up with so much joy. It was a beautiful moment.",
-      image: "https://picsum.photos/seed/soccer/400/200",
+      image: "https://images.unsplash.com/photo-1552318965-6e6be7484ada?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8c29jY2VyJTIwZ29hbHxlbnwwfHx8fDE3NTkxOTU3OTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
       dataAiHint: "soccer goal"
     },
     {
