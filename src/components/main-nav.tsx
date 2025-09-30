@@ -20,6 +20,7 @@ const legalEvidenceItems = [
     { href: '/evidence-log', label: 'Evidence Log' },
     { href: '/evidence-ai', label: 'Evidence AI Assistant' },
     { href: '/document-analyzer', label: 'Document Analyzer' },
+    { href: '/blueprint', label: 'The Stability Blueprint' },
 ];
 
 const aiToolsItems = [
@@ -34,6 +35,10 @@ const childFocusedItems = [
     { href: '/milestones', label: 'Milestones' },
     { href: '/shared-lists', label: 'Shared Lists' },
     { href: '/family-tree', label: 'Family Tree' },
+]
+
+const aboutItems = [
+    { href: '/about', label: 'About Us' },
 ]
 
 export function MainNav({
@@ -95,6 +100,16 @@ export function MainNav({
             <DropdownMenuLabel>AI Tools</DropdownMenuLabel>
              <DropdownMenuGroup>
                  {aiToolsItems.map((item) => (
+                    <Link href={item.href} key={item.href} passHref>
+                        <DropdownMenuItem>
+                            {item.label}
+                        </DropdownMenuItem>
+                    </Link>
+                ))}
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+             <DropdownMenuGroup>
+                 {aboutItems.map((item) => (
                     <Link href={item.href} key={item.href} passHref>
                         <DropdownMenuItem>
                             {item.label}
