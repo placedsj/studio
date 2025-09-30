@@ -11,7 +11,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 // --- Data based on Harper being 10 months old as of Sept 6, 2025 ---
-const harper_dob = new Date("2024-11-12");
+const harper_dob = new Date("2024-11-12T00:00:00Z");
 
 // --- Infant Dashboard Component (0-24 months) ---
 const InfantDashboard = () => {
