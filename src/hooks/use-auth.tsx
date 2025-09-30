@@ -1,4 +1,3 @@
-
 // src/hooks/use-auth.tsx
 'use client';
 
@@ -11,8 +10,9 @@ import {
   signOut,
   updateProfile
 } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
+import { doc, setDoc } from 'firebase/firestore';
 
 type AuthContextType = {
   user: User | null;
@@ -39,9 +39,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signUp = async (firstName: string, lastName: string, email: string, password: string) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    await updateProfile(userCredential.user, {
+    const currentUser = userCredential.user;
+    
+    await updateProfile(currentUser, {
         displayName: `${firstName} ${lastName}`
     });
+
+    // Create a user document in Firestore
+    await setDoc(doc(db, "users", currentUser.uid), {
+        uid: currentUser.uid,
+        displayName: `${firstName} ${lastName}`,
+        email: currentUser.email,
+        createdAt: new Date(),
+    });
+
     // Manually update the user state so the UI reflects the new display name
     setUser(auth.currentUser); 
     router.push('/dashboard');

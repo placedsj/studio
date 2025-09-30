@@ -1,20 +1,26 @@
-
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from '@/hooks/use-auth';
-import { Nunito } from 'next/font/google'
+import { Montserrat, Open_Sans } from 'next/font/google';
 
 export const metadata: Metadata = {
   title: "Harper's Home",
   description: 'A collaborative space for modern co-parenting.',
 };
 
-const nunito = Nunito({
+const montserrat = Montserrat({
   subsets: ['latin'],
-  variable: '--font-nunito',
-  weight: ['400', '700', '900'],
-})
+  variable: '--font-montserrat',
+  weight: ['400', '600', '700', '800', '900'],
+});
+
+const openSans = Open_Sans({
+  subsets: ['latin'],
+  variable: '--font-open-sans',
+  weight: ['400', '600'],
+});
+
 
 export default function RootLayout({
   children,
@@ -23,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`font-body antialiased ${nunito.variable}`}>
+      <body className={`antialiased ${openSans.variable} ${montserrat.variable}`}>
         <AuthProvider>
           {children}
         </AuthProvider>

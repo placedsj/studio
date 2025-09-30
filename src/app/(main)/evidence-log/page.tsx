@@ -1,379 +1,302 @@
 // src/app/(main)/evidence-log/page.tsx
 'use client';
 
-import * as React from 'react';
-import { useForm } from 'react-hook-form';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { format } from 'date-fns';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { PlusCircle, Calendar as CalendarIcon, Filter, ArrowUpDown } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
+import { db } from '@/lib/firebase';
+import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from 'firebase/firestore';
+import { format } from 'date-fns';
+import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import { cn } from '@/lib/utils';
-import { Separator } from '@/components/ui/separator';
-import { Label } from '@/components/ui/label';
-import { useSearchParams } from 'next/navigation';
+import { Loader2, CalendarIcon } from 'lucide-react';
 
-const categories = ['Communication', 'Custody Exchange', 'Financial', 'Health', 'Other'] as const;
-
-const eventSchema = z.object({
-  date: z.date(),
-  category: z.enum(categories),
-  description: z.string().min(10, 'Please provide a detailed, factual description.'),
-  evidence: z.string().optional(),
+const logSchema = z.object({
+  eventDate: z.string().min(1, 'Date is required.'),
+  category: z.string().min(1, 'Category is required.'),
+  description: z.string().min(1, 'Description is required.'),
   partiesInvolved: z.string().optional(),
-  userResponse: z.string().optional(),
+  yourResponse: z.string().optional(),
 });
 
-type EventEntry = z.infer<typeof eventSchema> & { loggedBy: string };
-type SortOrder = 'desc' | 'asc';
+type LogFormValues = z.infer<typeof logSchema>;
 
-const initialEvents: EventEntry[] = [
-    {
-        date: new Date("2025-08-10T10:00:00Z"),
-        category: "Communication",
-        description: "Received a text message regarding a change in pickup time for Saturday.",
-        evidence: "Screenshot of text message saved.",
-        loggedBy: "Mom (Emma)",
-        partiesInvolved: "Mom (Emma)",
-        userResponse: "Agreed to the new time."
-    },
-    {
-        date: new Date("2025-08-08T15:30:00Z"),
-        category: "Financial",
-        description: "Paid for Harper's fall soccer league registration fee.",
-        evidence: "Receipt saved as Soccer_Receipt.pdf",
-        loggedBy: "Dad (Craig)"
-    },
-     {
-        date: new Date("2025-08-12T18:00:00Z"),
-        category: "Custody Exchange",
-        description: "Dad was 15 minutes late for the custody exchange at the library.",
-        evidence: "Documented time of arrival.",
-        loggedBy: "Mom (Emma)",
-        partiesInvolved: "Dad (Craig)",
-        userResponse: "Sent a text to confirm his ETA."
-    },
-    {
-        date: new Date("2025-07-25T09:00:00Z"),
-        category: "Health",
-        description: "Took Harper to her annual check-up. Doctor noted she is healthy.",
-        evidence: "Check-up summary from Dr. Carter's office.",
-        loggedBy: "Dad (Craig)",
-        partiesInvolved: "Dad (Craig), Dr. Carter"
-    }
-];
+interface Event {
+    id: string;
+    eventDate: string;
+    category: string;
+    description: string;
+    partiesInvolved?: string;
+    response?: string;
+    loggedBy: string;
+    timestamp?: {
+        toDate: () => Date;
+    };
+}
 
-const users = ['Mom (Emma)', 'Dad (Craig)'] as const;
 
-function EvidenceLogPageInternal() {
-    const [events, setEvents] = React.useState<EventEntry[]>(initialEvents);
-    const [filteredEvents, setFilteredEvents] = React.useState<EventEntry[]>(initialEvents);
-    const [categoryFilter, setCategoryFilter] = React.useState<string>('all');
-    const [userFilter, setUserFilter] = React.useState<string>('all');
-    const [sortOrder, setSortOrder] = React.useState<SortOrder>('desc');
-
+export default function EvidenceLogPage() {
+    const { user } = useAuth();
     const { toast } = useToast();
     const searchParams = useSearchParams();
 
-    const form = useForm<z.infer<typeof eventSchema>>({
-        resolver: zodResolver(eventSchema),
+    const [events, setEvents] = useState<Event[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const form = useForm<LogFormValues>({
+        resolver: zodResolver(logSchema),
         defaultValues: {
-            date: new Date("2025-09-06T00:00:00Z"),
-            category: 'Communication',
-            description: '',
-            evidence: '',
+            eventDate: format(new Date(), 'yyyy-MM-dd'),
+            category: searchParams.get('category') || 'Communication',
+            description: searchParams.get('description') || '',
             partiesInvolved: '',
-            userResponse: '',
+            yourResponse: '',
         },
     });
+     
+    useEffect(() => {
+        // This effect updates the form if the query params change after initial load.
+        form.reset({
+            eventDate: format(new Date(), 'yyyy-MM-dd'),
+            category: searchParams.get('category') || 'Communication',
+            description: searchParams.get('description') || '',
+            partiesInvolved: '',
+            yourResponse: '',
+        })
+    }, [searchParams, form]);
 
-    React.useEffect(() => {
-        const category = searchParams.get('category');
-        const description = searchParams.get('description');
-        const evidence = searchParams.get('evidence');
 
-        if (category && categories.includes(category as any)) {
-            form.setValue('category', category as z.infer<typeof eventSchema>['category']);
-        }
-        if (description) {
-            form.setValue('description', description);
-        }
-        if (evidence) {
-            form.setValue('evidence', evidence);
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchParams, form.setValue]);
-
-    React.useEffect(() => {
-        let result = [...events];
-
-        if (categoryFilter !== 'all') {
-            result = result.filter(event => event.category === categoryFilter);
-        }
-
-        if (userFilter !== 'all') {
-            result = result.filter(event => event.loggedBy === userFilter);
-        }
-
-        result.sort((a, b) => {
-            if (sortOrder === 'desc') {
-                return b.date.getTime() - a.date.getTime();
-            }
-            return a.date.getTime() - b.date.getTime();
+    useEffect(() => {
+        if (!user) return;
+        const evidenceCollectionRef = collection(db, `users/${user.uid}/evidence`);
+        const q = query(evidenceCollectionRef, orderBy('timestamp', 'desc'));
+        
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const eventsData: Event[] = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...(doc.data() as Omit<Event, 'id'>),
+            }));
+            setEvents(eventsData);
         });
 
-        setFilteredEvents(result);
+        return () => unsubscribe();
+    }, [user]);
 
-    }, [events, categoryFilter, userFilter, sortOrder]);
+    const handleLogEvent = async (values: LogFormValues) => {
+        if (!user) {
+            toast({
+                variant: 'destructive',
+                title: 'Not authenticated',
+                description: 'You must be logged in to log an event.',
+            });
+            return;
+        }
 
+        setIsLoading(true);
 
-    function onSubmit(values: z.infer<typeof eventSchema>) {
-        // In a real app, we'd get the current user's name
-        const loggedBy = "Dad (Craig)"; // Placeholder
-        const newEvent: EventEntry = { ...values, loggedBy };
-        setEvents(prev => [newEvent, ...prev]);
-        toast({
-            title: "Event Logged",
-            description: "Your new evidence entry has been saved.",
-        });
-        form.reset();
-    }
-    
-    const toggleSortOrder = () => {
-        setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc');
-    }
+        try {
+            const evidenceCollectionRef = collection(db, `users/${user.uid}/evidence`);
+            await addDoc(evidenceCollectionRef, {
+                ...values,
+                loggedBy: user.displayName || 'Unknown User',
+                userId: user.uid,
+                timestamp: serverTimestamp()
+            });
+            toast({
+                title: 'Event Logged',
+                description: 'Your event has been securely saved.',
+            });
+            form.reset({
+                eventDate: format(new Date(), 'yyyy-MM-dd'),
+                category: 'Communication',
+                description: '',
+                partiesInvolved: '',
+                yourResponse: '',
+            });
+        } catch (error) {
+            console.error("Error adding document: ", error);
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'There was a problem logging your event.',
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
-    <div className="space-y-8">
-        <div>
-            <h1 className="text-3xl font-headline font-extra-bold uppercase tracking-tight">Evidence Log</h1>
-            <p className="text-muted-foreground mt-1">
-                A secure and chronological record of co-parenting events.
-            </p>
+    <div className="main-content">
+        <div className="page-header">
+            <h1>EVIDENCE LOG</h1>
+            <p>A secure and chronological record of co-parenting events</p>
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-1">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Log New Event</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <Form {...form}>
-                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                                <FormField
-                                  control={form.control}
-                                  name="date"
-                                  render={({ field }) => (
-                                    <FormItem className="flex flex-col">
-                                      <FormLabel>Date of Event</FormLabel>
-                                      <Popover>
-                                        <PopoverTrigger asChild>
-                                          <FormControl>
-                                            <Button
-                                              variant={"outline"}
-                                              className={cn(
-                                                "w-full pl-3 text-left font-normal",
-                                                !field.value && "text-muted-foreground"
-                                              )}
-                                            >
-                                              {field.value ? (
-                                                format(field.value, "PPP")
-                                              ) : (
-                                                <span>Pick a date</span>
-                                              )}
-                                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                            </Button>
-                                          </FormControl>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-auto p-0" align="start">
-                                          <Calendar
-                                            mode="single"
-                                            selected={field.value}
-                                            onSelect={field.onChange}
-                                            disabled={(date) => date > new Date("2025-09-06T00:00:00Z")}
-                                            initialFocus
-                                          />
-                                        </PopoverContent>
-                                      </Popover>
-                                      <FormMessage />
+
+        <div className="evidence-container">
+            <Card className="log-new-event">
+                <CardHeader>
+                    <CardTitle as="h2">Log New Event</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(handleLogEvent)} className="space-y-6">
+                             <FormField
+                                control={form.control}
+                                name="eventDate"
+                                render={({ field }) => (
+                                    <FormItem className="form-group">
+                                        <FormLabel>Date of Event</FormLabel>
+                                         <div className="input-with-icon">
+                                            <FormControl>
+                                                <Input type="date" {...field} />
+                                            </FormControl>
+                                             <CalendarIcon className="far" />
+                                        </div>
+                                        <FormMessage />
                                     </FormItem>
-                                  )}
-                                />
-                                <FormField
-                                  control={form.control}
-                                  name="category"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>Category</FormLabel>
-                                      <Select onValueChange={field.onChange} value={field.value}>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="category"
+                                render={({ field }) => (
+                                    <FormItem className="form-group">
+                                        <FormLabel>Category</FormLabel>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select a category" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="Communication">Communication</SelectItem>
+                                                <SelectItem value="Custody Exchange">Custody Exchange</SelectItem>
+                                                <SelectItem value="Financial">Financial</SelectItem>
+                                                <SelectItem value="Health">Health</SelectItem>
+                                                <SelectItem value="Safety Concern">Safety Concern</SelectItem>
+                                                <SelectItem value="Other">Other</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="description"
+                                render={({ field }) => (
+                                    <FormItem className="form-group">
+                                        <FormLabel>Factual Description</FormLabel>
                                         <FormControl>
-                                          <SelectTrigger>
-                                            <SelectValue placeholder="Select a category" />
-                                          </SelectTrigger>
+                                            <Textarea placeholder="Describe the event in factual, objective detail..." {...field} />
                                         </FormControl>
-                                        <SelectContent>
-                                          {categories.map(cat => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)}
-                                        </SelectContent>
-                                      </Select>
-                                      <FormMessage />
+                                        <FormMessage />
                                     </FormItem>
-                                  )}
-                                />
-                                <FormField
-                                  control={form.control}
-                                  name="description"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>Description</FormLabel>
-                                      <FormControl>
-                                        <Textarea rows={5} placeholder="Describe the event in factual detail..." {...field} />
-                                      </FormControl>
-                                      <FormMessage />
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="partiesInvolved"
+                                render={({ field }) => (
+                                    <FormItem className="form-group">
+                                        <FormLabel>Parties Involved (Optional)</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="e.g., Jane Doe, Officer Smith" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
                                     </FormItem>
-                                  )}
-                                />
-                                <FormField
-                                  control={form.control}
-                                  name="partiesInvolved"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>Parties Involved (Optional)</FormLabel>
-                                      <FormControl>
-                                        <Input placeholder="e.g., Jane Doe, Officer Smith" {...field} />
-                                      </FormControl>
-                                      <FormMessage />
+                                )}
+                            />
+                             <FormField
+                                control={form.control}
+                                name="yourResponse"
+                                render={({ field }) => (
+                                    <FormItem className="form-group">
+                                        <FormLabel>Your Response (Optional)</FormLabel>
+                                        <FormControl>
+                                            <Textarea placeholder="How you responded to the event..." {...field} />
+                                        </FormControl>
+                                        <FormMessage />
                                     </FormItem>
-                                  )}
-                                />
-                                <FormField
-                                  control={form.control}
-                                  name="userResponse"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>Your Response (Optional)</FormLabel>
-                                      <FormControl>
-                                        <Textarea rows={3} placeholder="e.g., Sent text to confirm new time..." {...field} />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />
-                                 <FormField
-                                  control={form.control}
-                                  name="evidence"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>Supporting Evidence (Optional)</FormLabel>
-                                      <FormControl>
-                                        <Textarea rows={3} placeholder="e.g., Text message screenshot saved on 11/10/23..." {...field} />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />
-                                <Button type="submit" className="w-full">
-                                    <PlusCircle />
-                                    <span>Save Event</span>
-                                </Button>
-                            </form>
-                        </Form>
-                    </CardContent>
-                </Card>
-            </div>
-            <div className="lg:col-span-2">
-                 <Card>
-                    <CardHeader>
-                        <CardTitle>Event History</CardTitle>
-                        <CardDescription>A chronological log of all recorded events.</CardDescription>
-                    </CardHeader>
-                     <CardContent>
-                        <div className="flex flex-col sm:flex-row gap-4 mb-4 p-4 bg-muted/50 rounded-lg border">
-                            <div className="flex-1">
-                                <Label htmlFor="category-filter">Filter by Category</Label>
-                                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                                    <SelectTrigger id="category-filter">
-                                        <SelectValue placeholder="Select category..." />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">All Categories</SelectItem>
-                                        {categories.map(cat => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="flex-1">
-                                <Label htmlFor="user-filter">Filter by User</Label>
-                                <Select value={userFilter} onValueChange={setUserFilter}>
-                                    <SelectTrigger id="user-filter">
-                                        <SelectValue placeholder="Select user..." />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">All Users</SelectItem>
-                                        {users.map(user => <SelectItem key={user} value={user}>{user}</SelectItem>)}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="flex items-end">
-                                <Button variant="outline" onClick={toggleSortOrder} className="w-full sm:w-auto">
-                                    <ArrowUpDown />
-                                    <span>Sort by Date ({sortOrder === 'desc' ? 'Newest' : 'Oldest'})</span>
-                                </Button>
-                            </div>
+                                )}
+                            />
+                            <Button type="submit" className="btn-primary" disabled={isLoading}>
+                                {isLoading && <Loader2 className="animate-spin" />}
+                                Log Event
+                            </Button>
+                        </form>
+                    </Form>
+                </CardContent>
+            </Card>
+
+            <div className="event-history-section">
+                <div className="event-history-header">
+                    <h2>Event History</h2>
+                    <p>A chronological record of events</p>
+                    <div className="filter-sort">
+                        <div className="filter-group">
+                            <Label htmlFor="filterCategory">Filter by Category</Label>
+                            <Select>
+                               <SelectTrigger id="filterCategory">
+                                    <SelectValue placeholder="All Categories" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="All">All Categories</SelectItem>
+                                    <SelectItem value="Communication">Communication</SelectItem>
+                                    <SelectItem value="Custody Exchange">Custody Exchange</SelectItem>
+                                    <SelectItem value="Financial">Financial</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
-                        <Separator className="my-4" />
-                        <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-2">
-                            {filteredEvents.length > 0 ? (
-                                filteredEvents.map((event, index) => (
-                                    <div key={index} className="pb-4 border-b last:border-b-0">
-                                        <p className="text-sm text-muted-foreground">{format(event.date, 'PPP p')}</p>
-                                        <p className="font-semibold text-lg">{event.category}</p>
-                                        <p className="mt-1 whitespace-pre-wrap text-sm">{event.description}</p>
-                                        {event.partiesInvolved && (
-                                            <div className="text-sm mt-2 text-muted-foreground">
-                                                <span className="font-semibold">Parties Involved:</span> {event.partiesInvolved}
-                                            </div>
-                                        )}
-                                         {event.userResponse && (
-                                            <div className="text-sm mt-2 text-muted-foreground">
-                                                <span className="font-semibold">My Response:</span> {event.userResponse}
-                                            </div>
-                                        )}
-                                        {event.evidence && (
-                                            <div className="text-sm mt-2 text-muted-foreground bg-accent/50 p-2 rounded-md">
-                                                <span className="font-semibold">Evidence Note:</span> {event.evidence}
-                                            </div>
-                                        )}
-                                        <p className="text-xs text-muted-foreground mt-2 text-right">Logged by {event.loggedBy}</p>
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="text-center text-muted-foreground py-16">
-                                    <Filter className="mx-auto mb-2" />
-                                    <p className="font-semibold">No Matching Events</p>
-                                    <p className="text-sm">Try adjusting your filters.</p>
-                                </div>
-                            )}
+                        <div className="sort-group">
+                            <Label htmlFor="sortOrder">Sort by</Label>
+                            <Select>
+                               <SelectTrigger id="sortOrder">
+                                    <SelectValue placeholder="Date (Newest)" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="newest">Date (Newest)</SelectItem>
+                                    <SelectItem value="oldest">Date (Oldest)</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
-                    </CardContent>
-                 </Card>
+                    </div>
+                </div>
+
+                <div className="event-list">
+                    {events.length === 0 && <p className="text-center text-muted-foreground py-8">No events logged yet.</p>}
+                    {events.map(event => (
+                        <Card key={event.id} className="event-item">
+                            <div className="event-meta">
+                               <span className="event-date">
+                                    {format(new Date(event.eventDate.replace(/-/g, '/')), 'MMMM do, yyyy')}
+                                </span>
+                                {event.timestamp && (
+                                     <span className="event-time">
+                                        {format(event.timestamp.toDate(), 'p')}
+                                     </span>
+                                )}
+                                <span className="logged-by">Logged by {event.loggedBy}</span>
+                            </div>
+                            <div className="event-details">
+                                <h3>{event.category}</h3>
+                                <p>{event.description}</p>
+                                {event.partiesInvolved && <p><strong>Parties Involved:</strong> {event.partiesInvolved}</p>}
+                                {event.response && <p><strong>Your Response:</strong> {event.response}</p>}
+                            </div>
+                        </Card>
+                    ))}
+                </div>
             </div>
         </div>
     </div>
   );
-}
-
-// Wrap the component in a Suspense boundary to use useSearchParams
-export default function EvidenceLogPage() {
-    return (
-        <React.Suspense fallback={<div>Loading...</div>}>
-            <EvidenceLogPageInternal />
-        </React.Suspense>
-    );
 }

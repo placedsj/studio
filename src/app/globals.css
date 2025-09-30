@@ -4,26 +4,34 @@
 
 @layer base {
   :root {
-    --background: 40 50% 98%;
-    --foreground: 240 10% 15%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 15%;
+    --background: 220 13% 97%; /* --light-gray-bg */
+    --foreground: 220 10% 20%; /* --text-color-dark */
+
+    --card: 0 0% 100%; /* --white */
+    --card-foreground: 220 10% 20%;
+
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 15%;
-    --primary: 260 80% 65%;
-    --primary-dark: 260 80% 55%;
+    --popover-foreground: 220 10% 20%;
+
+    --primary: 215 100% 15%; /* --navy-blue */
+    --primary-dark: 215 100% 11%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 30 100% 97%;
-    --secondary-foreground: 30 90% 25%;
-    --muted: 240 5% 96%;
-    --muted-foreground: 240 5% 45%;
-    --accent: 30 95% 60%;
-    --accent-foreground: 25 95% 20%;
+
+    --secondary: 220 13% 91%; /* --silver-gray */
+    --secondary-foreground: 215 100% 15%;
+
+    --muted: 220 13% 91%;
+    --muted-foreground: 220 9% 45%; /* --text-color-light */
+
+    --accent: 45 100% 50%; /* --pale-yellow-orange */
+    --accent-foreground: 215 100% 15%;
+
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5% 90%;
-    --input: 240 5% 90%;
-    --ring: 260 80% 65%;
+
+    --border: 220 13% 80%; /* --border-color */
+    --input: 220 13% 80%;
+    --ring: 215 100% 15%;
     --radius: 0.75rem;
 
     --mom-day: 330 100% 70%;
@@ -31,27 +39,35 @@
   }
 
   .dark {
-    --background: 240 10% 10%;
-    --foreground: 60 90% 95%;
-    --card: 240 10% 12%;
-    --card-foreground: 60 90% 95%;
-    --popover: 240 10% 10%;
-    --popover-foreground: 60 90% 95%;
-    --primary: 260 80% 70%;
-    --primary-dark: 260 80% 60%;
-    --primary-foreground: 240 10% 10%;
-    --secondary: 30 90% 15%;
-    --secondary-foreground: 30 100% 90%;
-    --muted: 240 5% 15%;
-    --muted-foreground: 240 5% 55%;
-    --accent: 30 95% 60%;
-    --accent-foreground: 30 95% 90%;
+    --background: 215 100% 8%; 
+    --foreground: 220 13% 91%; 
+
+    --card: 215 100% 12%; 
+    --card-foreground: 220 13% 91%;
+
+    --popover: 215 100% 8%;
+    --popover-foreground: 220 13% 91%;
+
+    --primary: 45 100% 50%; /* --pale-yellow-orange */
+    --primary-dark: 45 100% 40%;
+    --primary-foreground: 215 100% 8%;
+
+    --secondary: 215 100% 15%; 
+    --secondary-foreground: 220 13% 91%;
+
+    --muted: 215 100% 15%;
+    --muted-foreground: 220 9% 45%;
+
+    --accent: 45 100% 50%; 
+    --accent-foreground: 215 100% 8%;
+
     --destructive: 0 63% 31%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5% 20%;
-    --input: 240 5% 20%;
-    --ring: 260 80% 70%;
 
+    --border: 215 100% 20%;
+    --input: 215 100% 20%;
+    --ring: 45 100% 50%;
+    
     --mom-day: 330 100% 70%;
     --dad-day: 210 80% 60%;
   }
@@ -63,5 +79,83 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Open Sans', sans-serif;
   }
+  h1, h2, h3, h4, h5, h6 {
+      font-family: 'Montserrat', sans-serif;
+      @apply text-primary;
+  }
+}
+
+
+/* Re-implementing specific styles from the user's CSS in a Tailwind-compatible way */
+@layer components {
+    .main-content {
+        @apply max-w-7xl mx-auto my-8 px-4 sm:px-6 lg:px-8 flex flex-col gap-6;
+    }
+    .page-header h1 {
+        @apply text-5xl font-bold uppercase tracking-tighter mb-1;
+    }
+    .page-header p {
+        @apply text-muted-foreground text-lg;
+    }
+    .evidence-container {
+        @apply grid grid-cols-1 lg:grid-cols-3 gap-6;
+    }
+    .log-new-event {
+        @apply lg:col-span-1;
+    }
+    .log-new-event h2 {
+        @apply text-3xl;
+    }
+    .event-history-section {
+        @apply lg:col-span-2 space-y-6;
+    }
+    .event-history-header h2 {
+        @apply text-3xl mb-2;
+    }
+    .event-history-header p {
+        @apply text-muted-foreground mb-4;
+    }
+    .filter-sort {
+        @apply flex flex-col sm:flex-row gap-4 mb-6;
+    }
+    .filter-group, .sort-group {
+        @apply flex-1 min-w-[150px] space-y-2;
+    }
+    .filter-group label, .sort-group label {
+        @apply font-semibold text-sm;
+    }
+    .event-list {
+        @apply flex flex-col gap-4;
+    }
+    .event-item.card {
+        @apply p-6;
+    }
+    .event-meta {
+        @apply text-sm text-muted-foreground mb-2 flex flex-wrap justify-between items-center gap-x-4;
+    }
+    .event-details h3 {
+        @apply text-xl font-bold mb-2;
+    }
+    .event-details p {
+        @apply mb-1;
+    }
+
+    .form-group label {
+        @apply block mb-2 font-semibold;
+    }
+    .form-group .input-with-icon {
+        @apply relative flex items-center;
+    }
+    .form-group .input-with-icon .far {
+        @apply absolute right-3 text-muted-foreground pointer-events-none;
+    }
+    
+    .btn-primary {
+        @apply bg-primary text-primary-foreground font-semibold text-lg py-3 px-6 rounded-lg;
+    }
+     .btn-primary:hover {
+        @apply bg-primary-dark;
+    }
 }
