@@ -43,7 +43,7 @@ interface Event {
 }
 
 
-export default function EvidenceLogPage() {
+function EvidenceLogPageInternal() {
     const { user } = useAuth();
     const { toast } = useToast();
     const searchParams = useSearchParams();
@@ -67,7 +67,7 @@ export default function EvidenceLogPage() {
         form.reset({
             eventDate: format(new Date(), 'yyyy-MM-dd'),
             category: searchParams.get('category') || 'Communication',
-            description: searchParams.get('description') || '',
+            description: searchParams.get('description') || searchParams.get('evidence') || '',
             partiesInvolved: '',
             yourResponse: '',
         })
@@ -299,4 +299,13 @@ export default function EvidenceLogPage() {
         </div>
     </div>
   );
+}
+
+// Wrap the component in a Suspense boundary to use useSearchParams
+export default function EvidenceLogPage() {
+    return (
+        <React.Suspense fallback={<div>Loading...</div>}>
+            <EvidenceLogPageInternal />
+        </React.Suspense>
+    );
 }
