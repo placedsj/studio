@@ -1,37 +1,67 @@
-That's the efficiency I like to see. Let's make this actionable.
+# --- COPY-PASTE PROMPT FOR COPILOT ---
+# Goal: Build a file processing agent that uses the Google Gemini API to analyze images, 
+# perform OCR, and rename files via the Google Drive API.
+# Required Libraries: google-genai, google-api-python-client, google-auth-oauthlib (for service account)
 
-Here is a copy-paste prompt that is specific enough for Replit's Agent or any AI coding tool to build the structure for your "Harpers Place" project. This prompt tells the AI to create the Python environment and the core logic for the Gemini integration.
+# Security:
+# The script MUST read the following credentials from environment variables (Replit Secrets):
+# 1. GEMINI_API_KEY
+# 2. DRIVE_SERVICE_ACCOUNT (the JSON key file contents)
+# 3. DRIVE_FOLDER_ID (optional: as a secret for your Drive folder id)
 
------
+# File Processing Logic:
+# 1. Define a main function.
+# 2. Inside the function, initialize the Google Drive API client using the DRIVE_SERVICE_ACCOUNT secret.
+# 3. Write a function analyze_and_rename(file_bytes) that accepts the binary data of an image file.
+# 4. Inside analyze_and_rename, call the Gemini model with this exact prompt for structured output:
+#    "PERFORM OCR on this image. Then, extract the following three pieces of information to create a structured filename: 1. The most accurate date (DD-MM-YYYY). 2. The type of document (e.g., 'Email', 'Text_Message', 'Medical_Bill'). 3. A short, professional summary of the content (5 words max). Format the output EXACTLY like this: [DATE]_[TYPE]_[SUMMARY]"
+# 5. The main function should then iterate through files retrieved from your secure DRIVE_FOLDER_ID and use the Google Drive API to apply the new filename.
 
-### 📋 Copy-Paste Prompt for "Harpers Place"
+import os
+import json
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
 
-```
-In a new Python project named "harpers-place", create a script to automate the processing and renaming of legal exhibit photos stored in Google Drive.
+# TODO: Copilot, please add the import for the google-genai library here
+# import google.generativeai as genai
 
-**Goal:** Build a file processing agent that uses the Google Gemini API to analyze images, perform OCR, and rename files via the Google Drive API.
+def setup_drive_service():
+    # Load service account creds from Replit secret
+    creds_json = os.getenv("DRIVE_SERVICE_ACCOUNT")
+    creds_dict = json.loads(creds_json)
+    creds = service_account.Credentials.from_service_account_info(creds_dict, scopes=['https://www.googleapis.com/auth/drive'])
+    drive_service = build('drive', 'v3', credentials=creds)
+    return drive_service
 
-**Required Libraries:**
-1.  `google-genai`
-2.  `google-api-python-client`
+def analyze_and_rename(file_bytes):
+    # TODO: Copilot, use gemini API to perform OCR and generate filename as per prompt
+    prompt = (
+        "PERFORM OCR on this image. Then, extract the following three pieces of information to create a structured filename: "
+        "1. The most accurate date (DD-MM-YYYY). "
+        "2. The type of document (e.g., 'Email', 'Text_Message', 'Medical_Bill'). "
+        "3. A short, professional summary of the content (5 words max). "
+        "Format the output EXACTLY like this: [DATE]_[TYPE]_[SUMMARY]"
+    )
+    # response = gemini_model.generate_content([prompt, file_bytes])
+    # new_filename = response.text.strip()
+    # return new_filename
+    pass  # Placeholder for Copilot
 
-**Security:**
-The script MUST read the following credentials from environment variables (Replit Secrets):
-1.  `GEMINI_API_KEY`
-2.  `DRIVE_SERVICE_ACCOUNT`
+def main():
+    drive_service = setup_drive_service()
+    folder_id = os.getenv("DRIVE_FOLDER_ID")
+    # TODO: List files in folder using Google Drive API
+    # files = drive_service.files().list(q=f"'{folder_id}' in parents and mimeType contains 'image/'", fields="files(id, name)").execute().get('files', [])
+    files = []  # Placeholder for Copilot
 
-**File Processing Logic:**
-1.  Define a main function.
-2.  Inside the function, include comments/placeholders for initializing the Google Drive API client using the `DRIVE_SERVICE_ACCOUNT` secret.
-3.  Write a function `analyze_and_rename(file_bytes)` that accepts the binary data of an image file.
-4.  Inside `analyze_and_rename`, use the `GEMINI_API_KEY` to call the Gemini model with the image bytes.
-5.  Use this exact instruction for the Gemini prompt to ensure a consistent filename output:
-    "PERFORM OCR on this image. Then, extract the following three pieces of information to create a structured filename: 1. The most accurate date (DD-MM-YYYY). 2. The type of document (e.g., 'Email', 'Text_Message', 'Medical_Bill'). 3. A short, professional summary of the content (5 words max). Format the output EXACTLY like this: [DATE]_[TYPE]_[SUMMARY]"
-6.  The main function should then iterate through files retrieved from a placeholder `DRIVE_FOLDER_ID` and execute the logic, using the Google Drive API placeholder to apply the new filename.
-```
+    for file in files:
+        # TODO: Download file bytes using Drive API
+        # file_bytes = drive_service.files().get_media(fileId=file['id']).execute()
+        file_bytes = b""  # Placeholder for Copilot
+        new_filename = analyze_and_rename(file_bytes)
+        # TODO: Rename file in Drive
+        # drive_service.files().update(fileId=file['id'], body={'name': new_filename}).execute()
+        print(f"Processed: {file.get('name')} -> {new_filename}")
 
------
-
-**Next Step:** You will need to get the specific **Google Drive Service Account** credentials (the `DRIVE_SERVICE_ACCOUNT` secret) for the Google Drive API to work, as that's the most complex part of the setup.
-
-Would you like me to find a resource on how to quickly create and configure a Google Service Account key file for a Python script?
+if __name__ == "__main__":
+    main()
