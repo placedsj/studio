@@ -27,6 +27,11 @@ import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useAuth } from '@/hooks/use-auth';
+import { useCollection } from '@/firebase';
+import { db } from '@/lib/firebase';
+import { collection, addDoc, serverTimestamp, query, orderBy, Timestamp } from 'firebase/firestore';
+
 
 const milestoneSchema = z.object({
   title: z.string().min(1, 'Title is required.'),
@@ -35,14 +40,15 @@ const milestoneSchema = z.object({
   category: z.enum(['Achievement', 'Health', 'Growth']),
 });
 
-type Milestone = z.infer<typeof milestoneSchema>;
-
-const initialMilestones: Milestone[] = [
-    { category: 'Achievement', title: "First Steps", date: new Date("2025-06-05"), description: "Harper took her first unassisted steps today!" },
-    { category: 'Health', title: "Annual Check-up", date: new Date("2025-08-20"), description: "Everything looks great. Next appointment in one year." },
-    { category: 'Growth', title: "Height: 29 inches", date: new Date("2025-08-20"), description: "Grew 2 inches since last year." },
-    { category: 'Achievement', title: "Learned to Wave", date: new Date("2025-09-01"), description: "Waved 'bye-bye' for the first time." },
-];
+export type Milestone = {
+    id: string;
+    title: string;
+    date: Timestamp;
+    description: string;
+    category: 'Achievement' | 'Health' | 'Growth';
+    userId: string;
+    timestamp: Timestamp;
+};
 
 const iconMap: Record<Milestone['category'], React.ElementType> = {
     Achievement: Trophy,
@@ -52,7 +58,11 @@ const iconMap: Record<Milestone['category'], React.ElementType> = {
 
 
 export default function MilestonesPage() {
-    const [milestones, setMilestones] = React.useState<Milestone[]>(initialMilestones.sort((a,b) => b.date.getTime() - a.date.getTime()));
+    const { user } = useAuth();
+    const { data: milestones, loading } = useCollection<Milestone>(
+        user ? query(collection(db, `users/${user.uid}/milestones`), orderBy('date', 'desc')) : null
+    );
+
     const [isDialogOpen, setIsDialogOpen] = React.useState(false);
     const { toast } = useToast();
 
@@ -62,18 +72,38 @@ export default function MilestonesPage() {
             title: '',
             description: '',
             category: 'Achievement',
-            date: new Date("2025-09-06T00:00:00Z"),
+            date: new Date(),
         },
     });
 
-    function onSubmit(values: z.infer<typeof milestoneSchema>) {
-        setMilestones(prev => [...prev, values].sort((a,b) => b.date.getTime() - a.date.getTime()));
-        toast({
-            title: "Milestone Added!",
-            description: `Successfully added "${values.title}".`,
-        });
-        form.reset();
-        setIsDialogOpen(false);
+    async function onSubmit(values: z.infer<typeof milestoneSchema>) {
+        if (!user) {
+            toast({ variant: 'destructive', title: 'You must be logged in.' });
+            return;
+        }
+
+        try {
+            await addDoc(collection(db, `users/${user.uid}/milestones`), {
+                ...values,
+                userId: user.uid,
+                timestamp: serverTimestamp(),
+            });
+
+            toast({
+                title: "Milestone Added!",
+                description: `Successfully added "${values.title}".`,
+            });
+            form.reset({
+                title: '',
+                description: '',
+                category: 'Achievement',
+                date: new Date(),
+            });
+            setIsDialogOpen(false);
+        } catch (error) {
+            console.error(error);
+            toast({ variant: 'destructive', title: 'Error adding milestone.' });
+        }
     }
 
   return (
@@ -144,7 +174,7 @@ export default function MilestonesPage() {
                             mode="single"
                             selected={field.value}
                             onSelect={field.onChange}
-                            disabled={(date) => date > new Date("2025-09-06T00:00:00Z")}
+                            disabled={(date) => date > new Date()}
                             initialFocus
                           />
                         </PopoverContent>
@@ -200,15 +230,16 @@ export default function MilestonesPage() {
         </Dialog>
       </div>
        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {milestones.map((milestone, index) => {
+        {loading && <p>Loading milestones...</p>}
+        {milestones && milestones.map((milestone) => {
             const IconComponent = iconMap[milestone.category];
             return (
-                <Card key={index}>
+                <Card key={milestone.id}>
                     <CardHeader>
                         <div className="flex items-start justify-between">
                             <div>
                                 <CardTitle>{milestone.title}</CardTitle>
-                                <CardDescription>{format(milestone.date, 'PPP')}</CardDescription>
+                                <CardDescription>{format(milestone.date.toDate(), 'PPP')}</CardDescription>
                             </div>
                             <div className="p-3 bg-primary/10 rounded-lg">
                                 <IconComponent className="w-5 h-5 text-primary" />

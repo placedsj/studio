@@ -9,11 +9,19 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { PlusCircle, ShoppingCart, Gift, School, X } from 'lucide-react';
 import Image from 'next/image';
+import { useAuth } from '@/hooks/use-auth';
+import { useCollection } from '@/firebase';
+import { db } from '@/lib/firebase';
+import { collection, addDoc, serverTimestamp, query, orderBy, doc, updateDoc, Timestamp } from 'firebase/firestore';
+import { useToast } from '@/hooks/use-toast';
+
 
 type GroceryItem = {
-    id: number;
+    id: string;
     name: string;
     checked: boolean;
+    userId: string;
+    timestamp: Timestamp;
 };
 
 type WishlistItem = {
@@ -24,13 +32,6 @@ type WishlistItem = {
     imageUrl: string;
     dataAiHint: string;
 };
-
-const initialGroceries: GroceryItem[] = [
-    { id: 1, name: 'Milk', checked: false },
-    { id: 2, name: 'Eggs', checked: true },
-    { id: 3, name: 'Bread', checked: false },
-    { id: 4, name: "Harper's favorite snacks", checked: false },
-];
 
 const harperWishlist: WishlistItem[] = [
     { id: 1, name: 'Wooden Building Blocks', description: 'A classic set of colorful wooden blocks for creative play.', link: '#', imageUrl: 'https://picsum.photos/200/200', dataAiHint: "building blocks" },
@@ -43,22 +44,42 @@ const schoolWishlist: WishlistItem[] = [
 
 
 export default function SharedListsPage() {
-    const [groceries, setGroceries] = React.useState(initialGroceries);
-    const [newGroceryItem, setNewGroceryItem] = React.useState('');
+    const { user } = useAuth();
+    const { data: groceries, loading } = useCollection<GroceryItem>(
+        user ? query(collection(db, `users/${user.uid}/groceries`), orderBy('timestamp', 'asc')) : null
+    );
 
-    const handleAddGrocery = () => {
-        if (newGroceryItem.trim() === '') return;
-        const newItem: GroceryItem = {
-            id: groceries.length + 1,
+    const [newGroceryItem, setNewGroceryItem] = React.useState('');
+    const { toast } = useToast();
+
+    const handleAddGrocery = async () => {
+        if (newGroceryItem.trim() === '' || !user) return;
+        
+        const newItem = {
             name: newGroceryItem,
             checked: false,
+            userId: user.uid,
+            timestamp: serverTimestamp(),
         };
-        setGroceries(prev => [...prev, newItem]);
-        setNewGroceryItem('');
+
+        try {
+            await addDoc(collection(db, `users/${user.uid}/groceries`), newItem);
+            setNewGroceryItem('');
+        } catch (error) {
+            console.error(error);
+            toast({ variant: 'destructive', title: 'Error adding item.'});
+        }
     };
     
-    const toggleGrocery = (id: number) => {
-        setGroceries(prev => prev.map(item => item.id === id ? {...item, checked: !item.checked} : item));
+    const toggleGrocery = async (id: string, checked: boolean) => {
+        if (!user) return;
+        const itemRef = doc(db, `users/${user.uid}/groceries`, id);
+        try {
+            await updateDoc(itemRef, { checked: !checked });
+        } catch (error) {
+            console.error(error);
+            toast({ variant: 'destructive', title: 'Error updating item.'});
+        }
     };
 
     const WishlistComponent = ({ title, items, icon: Icon }: { title: string, items: WishlistItem[], icon: React.ElementType }) => (
@@ -122,13 +143,14 @@ export default function SharedListsPage() {
                             <span>Add</span>
                         </Button>
                     </div>
+                    {loading && <p>Loading groceries...</p>}
                     <ul className="space-y-3">
-                        {groceries.map(item => (
+                        {groceries && groceries.map(item => (
                             <li key={item.id} className="flex items-center gap-3 p-3 bg-muted/50 rounded-md">
                                 <Checkbox 
                                     id={`item-${item.id}`}
                                     checked={item.checked}
-                                    onCheckedChange={() => toggleGrocery(item.id)}
+                                    onCheckedChange={() => toggleGrocery(item.id, item.checked)}
                                 />
                                 <label 
                                     htmlFor={`item-${item.id}`}

@@ -1,10 +1,8 @@
 // src/hooks/use-auth.tsx
 'use client';
 
-import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
+import { createContext, useContext } from 'react';
 import { 
-  onAuthStateChanged, 
-  User, 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
   signOut,
@@ -13,29 +11,12 @@ import {
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { doc, setDoc } from 'firebase/firestore';
+import { useUser, type AuthContextType } from '@/firebase';
 
-type AuthContextType = {
-  user: User | null;
-  loading: boolean;
-  signUp: (firstName: string, lastName: string, email: string, password: string) => Promise<any>;
-  logIn: (email: string, password: string) => Promise<any>;
-  logOut: () => Promise<void>;
-};
+const AuthContext = createContext<Omit<AuthContextType, 'user' | 'loading'> | undefined>(undefined);
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+export function AuthProvider({ children }: { children: React.React.Node }) {
   const router = useRouter();
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
 
   const signUp = async (firstName: string, lastName: string, email: string, password: string) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -53,8 +34,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         createdAt: new Date(),
     });
 
-    // Manually update the user state so the UI reflects the new display name
-    setUser(auth.currentUser); 
     router.push('/dashboard');
     return userCredential;
   };
@@ -71,8 +50,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const value = {
-    user,
-    loading,
     signUp,
     logIn,
     logOut,
@@ -82,9 +59,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 }
 
 export const useAuth = () => {
+  const userContext = useUser();
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+  if (context === undefined || userContext === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider and FirebaseProvider');
   }
-  return context;
+  return { ...userContext, ...context };
 };

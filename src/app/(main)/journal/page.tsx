@@ -27,7 +27,11 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { journalEntries as initialEntries, type JournalEntry } from '@/lib/journal-data';
+import { useAuth } from '@/hooks/use-auth';
+import { useCollection } from '@/firebase';
+import { db } from '@/lib/firebase';
+import { collection, addDoc, serverTimestamp, query, orderBy } from 'firebase/firestore';
+import type { JournalEntry } from '@/lib/journal-data';
 
 const entrySchema = z.object({
   title: z.string().min(1, 'Title is required.'),
@@ -39,7 +43,11 @@ const entrySchema = z.object({
 
 
 export default function JournalPage() {
-    const [entries, setEntries] = React.useState<JournalEntry[]>(initialEntries);
+    const { user } = useAuth();
+    const { data: entries, loading } = useCollection<JournalEntry>(
+        user ? query(collection(db, `users/${user.uid}/journal`), orderBy('timestamp', 'desc')) : null
+    );
+
     const [isDialogOpen, setIsDialogOpen] = React.useState(false);
     const { toast } = useToast();
 
@@ -48,24 +56,42 @@ export default function JournalPage() {
         defaultValues: {
             title: '',
             content: '',
-            date: new Date("2025-09-06T00:00:00Z"),
+            date: new Date(),
             image: '',
             dataAiHint: '',
         },
     });
 
-    function onSubmit(values: z.infer<typeof entrySchema>) {
-        const newEntry = {
-          ...values,
-          image: values.image || `https://picsum.photos/400/20${entries.length + 2}` // Placeholder image
-        };
-        setEntries(prev => [newEntry, ...prev].sort((a,b) => b.date.getTime() - a.date.getTime()));
-        toast({
-            title: "Journal Entry Added!",
-            description: `Successfully added "${values.title}".`,
-        });
-        form.reset();
-        setIsDialogOpen(false);
+    async function onSubmit(values: z.infer<typeof entrySchema>) {
+        if (!user) {
+            toast({ variant: 'destructive', title: 'You must be logged in.' });
+            return;
+        }
+
+        try {
+            const newEntry = {
+              ...values,
+              image: values.image || `https://picsum.photos/seed/${Math.random()}/400/200`,
+              userId: user.uid,
+              timestamp: serverTimestamp(),
+            };
+            await addDoc(collection(db, `users/${user.uid}/journal`), newEntry);
+            toast({
+                title: "Journal Entry Added!",
+                description: `Successfully added "${values.title}".`,
+            });
+            form.reset({
+                title: '',
+                content: '',
+                date: new Date(),
+                image: '',
+                dataAiHint: '',
+            });
+            setIsDialogOpen(false);
+        } catch (error) {
+            console.error(error);
+            toast({ variant: 'destructive', title: 'Error adding entry.' });
+        }
     }
 
   return (
@@ -134,7 +160,7 @@ export default function JournalPage() {
                             mode="single"
                             selected={field.value}
                             onSelect={field.onChange}
-                            disabled={(date) => date > new Date("2025-09-06T00:00:00Z")}
+                            disabled={(date) => date > new Date()}
                             initialFocus
                           />
                         </PopoverContent>
@@ -180,12 +206,13 @@ export default function JournalPage() {
         </Dialog>
       </div>
        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {entries.map((entry, index) => (
-          <Card key={index} className="overflow-hidden">
+        {loading && <p>Loading entries...</p>}
+        {entries && entries.map((entry) => (
+          <Card key={entry.id} className="overflow-hidden">
              <Image src={entry.image || 'https://picsum.photos/400/200'} data-ai-hint={entry.dataAiHint} alt={entry.title} width={400} height={200} className="object-cover w-full aspect-video" />
             <CardHeader>
               <CardTitle>{entry.title}</CardTitle>
-              <CardDescription>{format(entry.date, 'PPP')}</CardDescription>
+              <CardDescription>{format(entry.date.toDate(), 'PPP')}</CardDescription>
             </CardHeader>
             <CardContent>
                 <p className="text-muted-foreground">{entry.content}</p>

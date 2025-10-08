@@ -25,6 +25,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/use-auth';
+import { useCollection } from '@/firebase';
+import { db } from '@/lib/firebase';
+import { collection, addDoc, serverTimestamp, query, orderBy, Timestamp } from 'firebase/firestore';
 
 const logSchema = z.object({
   time: z.string().min(1, 'Time is required.'),
@@ -32,14 +36,15 @@ const logSchema = z.object({
   details: z.string().min(1, 'Details are required.'),
 });
 
-type LogEntry = z.infer<typeof logSchema> & { icon: LucideIcon };
+export type DailyLog = {
+    id: string;
+    time: string;
+    type: 'Feeding' | 'Diaper' | 'Sleep';
+    details: string;
+    userId: string;
+    timestamp: Timestamp;
+};
 
-const initialLogs: LogEntry[] = [
-    { time: "10:45", type: "Sleep", icon: BedDouble, details: "Woke up from nap" },
-    { time: "09:30", type: "Sleep", icon: BedDouble, details: "Started nap" },
-    { time: "08:45", type: "Diaper", icon: Baby, details: "Wet" },
-    { time: "08:15", type: "Feeding", icon: Utensils, details: "6 oz formula" },
-];
 
 const iconMap: Record<string, LucideIcon> = {
     Feeding: Utensils,
@@ -48,11 +53,15 @@ const iconMap: Record<string, LucideIcon> = {
 };
 
 export default function LogPage() {
-    const [logs, setLogs] = React.useState<LogEntry[]>(initialLogs);
+    const { user } = useAuth();
+    const { data: logs, loading } = useCollection<DailyLog>(
+        user ? query(collection(db, `users/${user.uid}/daily-logs`), orderBy('timestamp', 'desc')) : null
+    );
+
     const [isDialogOpen, setIsDialogOpen] = React.useState(false);
     const { toast } = useToast();
     
-    const logSummary = logs.map(log => `${log.time} - ${log.type}: ${log.details}`).join('\n');
+    const logSummary = logs ? logs.map(log => `${log.time} - ${log.type}: ${log.details}`).join('\n') : '';
 
     const form = useForm<z.infer<typeof logSchema>>({
         resolver: zodResolver(logSchema),
@@ -63,22 +72,32 @@ export default function LogPage() {
         },
     });
 
-    function onSubmit(values: z.infer<typeof logSchema>) {
-        const newEntry: LogEntry = {
-            ...values,
-            icon: iconMap[values.type],
-        };
-        setLogs(prev => [newEntry, ...prev]);
-        toast({
-            title: "Log Entry Added!",
-            description: `Successfully added "${values.type}" log.`,
-        });
-        form.reset({
-             time: format(new Date(), 'HH:mm'),
-             type: 'Feeding',
-             details: '',
-        });
-        setIsDialogOpen(false);
+    async function onSubmit(values: z.infer<typeof logSchema>) {
+        if (!user) {
+            toast({ variant: 'destructive', title: 'You must be logged in.' });
+            return;
+        }
+
+        try {
+            await addDoc(collection(db, `users/${user.uid}/daily-logs`), {
+                ...values,
+                userId: user.uid,
+                timestamp: serverTimestamp(),
+            });
+            toast({
+                title: "Log Entry Added!",
+                description: `Successfully added "${values.type}" log.`,
+            });
+            form.reset({
+                time: format(new Date(), 'HH:mm'),
+                type: 'Feeding',
+                details: '',
+            });
+            setIsDialogOpen(false);
+        } catch (error) {
+            console.error(error);
+            toast({ variant: 'destructive', title: 'Error adding log.' });
+        }
     }
 
   return (
@@ -181,18 +200,22 @@ export default function LogPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {logs.map((log, index) => (
-                                <TableRow key={index}>
-                                    <TableCell className="font-medium">{format(parse(log.time, 'HH:mm', new Date()), 'p')}</TableCell>
-                                    <TableCell>
-                                        <div className="flex items-center gap-2">
-                                            <log.icon className="w-4 h-4 text-muted-foreground" />
-                                            <span>{log.type}</span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>{log.details}</TableCell>
-                                </TableRow>
-                            ))}
+                            {loading && <TableRow><TableCell colSpan={3}>Loading logs...</TableCell></TableRow>}
+                            {logs && logs.map((log) => {
+                                const Icon = iconMap[log.type];
+                                return (
+                                    <TableRow key={log.id}>
+                                        <TableCell className="font-medium">{format(parse(log.time, 'HH:mm', new Date()), 'p')}</TableCell>
+                                        <TableCell>
+                                            <div className="flex items-center gap-2">
+                                                {Icon && <Icon className="w-4 h-4 text-muted-foreground" />}
+                                                <span>{log.type}</span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>{log.details}</TableCell>
+                                    </TableRow>
+                                )}
+                            )}
                         </TableBody>
                     </Table>
                 </CardContent>

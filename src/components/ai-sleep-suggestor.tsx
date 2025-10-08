@@ -23,7 +23,7 @@ interface AiSleepSuggestorProps {
     recentLogs: string;
 }
 
-const harper_dob = new Date("2024-11-12");
+const harper_dob = new Date("2024-11-12T00:00:00Z");
 
 export function AiSleepSuggestor({ recentLogs }: AiSleepSuggestorProps) {
   const [isLoading, setIsLoading] = useState(false);
@@ -59,7 +59,9 @@ export function AiSleepSuggestor({ recentLogs }: AiSleepSuggestorProps) {
 
   // Automatically trigger the form submission on initial load
   useEffect(() => {
-    onSubmit(form.getValues());
+    if (recentLogs) {
+        onSubmit(form.getValues());
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recentLogs]);
 

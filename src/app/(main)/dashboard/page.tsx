@@ -3,22 +3,42 @@
 
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { format, differenceInMonths } from 'date-fns';
+import { format, differenceInMonths, parse } from 'date-fns';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Utensils, BedDouble, Baby } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { journalEntries } from '@/lib/journal-data';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useAuth } from '@/hooks/use-auth';
+import { useCollection } from '@/firebase';
+import { collection, query, orderBy, limit } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import type { JournalEntry } from '@/lib/journal-data';
+import type { DailyLog } from '@/app/(main)/log/page';
 
 // --- Data based on Harper being 10 months old as of Sept 6, 2025 ---
 const harper_dob = new Date("2024-11-12T00:00:00Z");
 
 // --- Infant Dashboard Component (0-24 months) ---
 const InfantDashboard = () => {
-    const latestStory = journalEntries[0];
+    const { user } = useAuth();
     const [isClient, setIsClient] = useState(false);
+    
+    const { data: journalEntries, loading: journalLoading } = useCollection<JournalEntry>(
+        user ? query(collection(db, `users/${user.uid}/journal`), orderBy('timestamp', 'desc'), limit(1)) : null
+    );
+    const latestStory = journalEntries?.[0];
 
+    const { data: logs, loading: logsLoading } = useCollection<DailyLog>(
+        user ? query(collection(db, `users/${user.uid}/daily-logs`), orderBy('timestamp', 'desc')) : null
+    );
+
+    const getLatestLog = (type: string) => logs?.find(log => log.type === type);
+
+    const latestFeed = getLatestLog('Feeding');
+    const latestNap = getLatestLog('Sleep');
+    const latestDiaper = getLatestLog('Diaper');
+    
     useEffect(() => {
         setIsClient(true);
     }, []);
@@ -37,18 +57,18 @@ const InfantDashboard = () => {
                 <CardContent className="grid grid-cols-3 gap-4">
                     <div className="text-center">
                         <p className="text-sm font-semibold uppercase tracking-wider">LAST FEED</p>
-                        <p className="text-2xl font-bold">08:00 AM</p>
-                        <p className="text-xs opacity-80">45 mins ago</p>
+                        <p className="text-2xl font-bold">{latestFeed ? format(parse(latestFeed.time, 'HH:mm', new Date()), 'p') : 'N/A'}</p>
+                        <p className="text-xs opacity-80">{latestFeed?.details}</p>
                     </div>
                      <div className="text-center">
                         <p className="text-sm font-semibold uppercase tracking-wider">LAST NAP</p>
-                        <p className="text-2xl font-bold">09:11 AM</p>
-                        <p className="text-xs opacity-80">For 45 mins</p>
+                        <p className="text-2xl font-bold">{latestNap ? format(parse(latestNap.time, 'HH:mm', new Date()), 'p') : 'N/A'}</p>
+                        <p className="text-xs opacity-80">{latestNap?.details}</p>
                     </div>
                      <div className="text-center">
                         <p className="text-sm font-semibold uppercase tracking-wider">LAST DIAPER</p>
-                        <p className="text-2xl font-bold">08:30 AM</p>
-                        <p className="text-xs opacity-80">Wet</p>
+                        <p className="text-2xl font-bold">{latestDiaper ? format(parse(latestDiaper.time, 'HH:mm', new Date()), 'p') : 'N/A'}</p>
+                        <p className="text-xs opacity-80">{latestDiaper?.details}</p>
                     </div>
                 </CardContent>
             </Card>
@@ -102,17 +122,24 @@ const InfantDashboard = () => {
                  <Card>
                     <CardHeader>
                         <CardTitle>Latest Story</CardTitle>
-                        <CardDescription>{format(latestStory.date, 'PPP')}</CardDescription>
+                        {latestStory && <CardDescription>{format(latestStory.date.toDate(), 'PPP')}</CardDescription>}
                     </CardHeader>
                     <CardContent className="flex flex-col">
-                        {latestStory.image && (
-                           <Image src={latestStory.image} alt={latestStory.title} data-ai-hint={latestStory.dataAiHint} width={400} height={200} className="rounded-md object-cover w-full aspect-video mb-4" />
+                        {journalLoading && <p>Loading story...</p>}
+                        {latestStory ? (
+                            <>
+                                {latestStory.image && (
+                                <Image src={latestStory.image} alt={latestStory.title} data-ai-hint={latestStory.dataAiHint} width={400} height={200} className="rounded-md object-cover w-full aspect-video mb-4" />
+                                )}
+                                <h3 className="font-semibold mb-1">{latestStory.title}</h3>
+                                <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{latestStory.content}</p>
+                                <Button asChild variant="outline" size="sm">
+                                    <Link href="/journal">Read More</Link>
+                                </Button>
+                            </>
+                        ) : (
+                           !journalLoading && <p className="text-sm text-muted-foreground">No stories yet.</p>
                         )}
-                        <h3 className="font-semibold mb-1">{latestStory.title}</h3>
-                        <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{latestStory.content}</p>
-                        <Button asChild variant="outline" size="sm">
-                            <Link href="/journal">Read More</Link>
-                        </Button>
                     </CardContent>
                 </Card>
             </div>

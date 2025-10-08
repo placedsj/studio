@@ -3,6 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from '@/hooks/use-auth';
 import { Montserrat, Open_Sans } from 'next/font/google';
+import { FirebaseProvider } from '@/firebase';
 
 export const metadata: Metadata = {
   title: "Harper's Home",
@@ -31,7 +32,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`antialiased ${openSans.variable} ${montserrat.variable}`}>
         <AuthProvider>
-          {children}
+            <FirebaseProvider>
+              {children}
+            </FirebaseProvider>
         </AuthProvider>
         <Toaster />
       </body>

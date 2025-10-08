@@ -1,14 +1,18 @@
 // src/lib/journal-data.ts
+import type { Timestamp } from 'firebase/firestore';
 
 export type JournalEntry = {
+  id: string;
   title: string;
-  date: Date;
+  date: Timestamp;
   content: string;
   image?: string;
   dataAiHint?: string;
+  userId: string;
+  timestamp: Timestamp;
 };
 
-export const journalEntries: JournalEntry[] = [
+export const journalEntries: Omit<JournalEntry, 'id' | 'userId' | 'timestamp' | 'date'> & { date: Date }[] = [
     {
       title: "Harper's First Soccer Goal!",
       date: new Date("2025-08-26"),

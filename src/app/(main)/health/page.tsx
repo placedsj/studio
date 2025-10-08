@@ -27,7 +27,10 @@ import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
+import { useAuth } from '@/hooks/use-auth';
+import { useCollection } from '@/firebase';
+import { db } from '@/lib/firebase';
+import { collection, addDoc, serverTimestamp, query, orderBy, Timestamp } from 'firebase/firestore';
 
 const eventSchema = z.object({
   title: z.string().min(1, 'Title is required.'),
@@ -37,15 +40,17 @@ const eventSchema = z.object({
   doctor: z.string().optional(),
 });
 
-type HealthEvent = z.infer<typeof eventSchema>;
+export type HealthEvent = {
+  id: string;
+  title: string;
+  date: Timestamp;
+  details: string;
+  type: 'Appointment' | 'Immunization' | 'Note';
+  doctor?: string;
+  userId: string;
+  timestamp: Timestamp;
+};
 
-const initialEvents: HealthEvent[] = [
-    { type: 'Appointment', title: "Annual Check-up", date: new Date("2026-08-20T10:00:00Z"), doctor: "Dr. Emily Carter", details: "Routine annual physical exam." },
-    { type: 'Immunization', title: "Varicella (Chickenpox) Vaccine", date: new Date("2025-11-15T11:00:00Z"), doctor: "Dr. Emily Carter", details: "Second dose of the Varicella vaccine." },
-    { type: 'Appointment', title: "Dental Cleaning", date: new Date("2025-09-05T14:00:00Z"), doctor: "Dr. Adams", details: "Routine 6-month cleaning and check-up." },
-    { type: 'Immunization', title: "MMR Vaccine", date: new Date("2025-11-15T11:00:00Z"), doctor: "Dr. Emily Carter", details: "Second dose of the MMR vaccine." },
-    { type: 'Note', title: "Allergy Season Prep", date: new Date("2025-03-01T00:00:00Z"), details: "Dr. Carter recommended starting daily allergy medication around this time if symptoms appear." }
-];
 
 const iconMap: Record<HealthEvent['type'], React.ElementType> = {
     Appointment: Stethoscope,
@@ -54,7 +59,11 @@ const iconMap: Record<HealthEvent['type'], React.ElementType> = {
 };
 
 export default function HealthPage() {
-    const [events, setEvents] = React.useState<HealthEvent[]>(initialEvents.sort((a,b) => b.date.getTime() - a.date.getTime()));
+    const { user } = useAuth();
+    const { data: events, loading } = useCollection<HealthEvent>(
+        user ? query(collection(db, `users/${user.uid}/health-events`), orderBy('date', 'desc')) : null
+    );
+
     const [isDialogOpen, setIsDialogOpen] = React.useState(false);
     const { toast } = useToast();
 
@@ -69,20 +78,41 @@ export default function HealthPage() {
         },
     });
 
-    function onSubmit(values: z.infer<typeof eventSchema>) {
-        setEvents(prev => [...prev, values].sort((a,b) => b.date.getTime() - a.date.getTime()));
-        toast({
-            title: "Health Event Added!",
-            description: `Successfully added "${values.title}".`,
-        });
-        form.reset();
-        setIsDialogOpen(false);
+    async function onSubmit(values: z.infer<typeof eventSchema>) {
+        if (!user) {
+            toast({ variant: 'destructive', title: 'You must be logged in.' });
+            return;
+        }
+
+        try {
+            await addDoc(collection(db, `users/${user.uid}/health-events`), {
+                ...values,
+                userId: user.uid,
+                timestamp: serverTimestamp(),
+            });
+            toast({
+                title: "Health Event Added!",
+                description: `Successfully added "${values.title}".`,
+            });
+            form.reset({
+                title: '',
+                details: '',
+                type: 'Appointment',
+                date: new Date(),
+                doctor: '',
+            });
+            setIsDialogOpen(false);
+        } catch (error) {
+            console.error(error);
+            toast({ variant: 'destructive', title: 'Error adding event.' });
+        }
     }
 
-    const upcomingAppointments = events.filter(e => e.type === 'Appointment' && isFuture(e.date));
-    const pastAppointments = events.filter(e => e.type === 'Appointment' && isPast(e.date));
-    const immunizations = events.filter(e => e.type === 'Immunization');
-    const notes = events.filter(e => e.type === 'Note');
+    const sortedEvents = events ? [...events].sort((a,b) => b.date.toMillis() - a.date.toMillis()) : [];
+    const upcomingAppointments = sortedEvents.filter(e => e.type === 'Appointment' && isFuture(e.date.toDate()));
+    const pastAppointments = sortedEvents.filter(e => e.type === 'Appointment' && isPast(e.date.toDate()));
+    const immunizations = sortedEvents.filter(e => e.type === 'Immunization');
+    const notes = sortedEvents.filter(e => e.type === 'Note');
 
     const EventCard = ({ event }: { event: HealthEvent }) => {
         const Icon = iconMap[event.type];
@@ -95,7 +125,7 @@ export default function HealthPage() {
                     <p className="font-semibold">{event.title}</p>
                     <p className="text-sm text-muted-foreground">{event.details}</p>
                     {event.doctor && <p className="text-xs text-muted-foreground/80">With {event.doctor}</p>}
-                    <p className="text-xs font-medium pt-1">{format(event.date, 'PPP p')}</p>
+                    <p className="text-xs font-medium pt-1">{format(event.date.toDate(), 'PPP p')}</p>
                 </div>
             </div>
         )
@@ -243,10 +273,11 @@ export default function HealthPage() {
                     <CardTitle>Upcoming Appointments</CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
-                    {upcomingAppointments.length > 0 ? (
-                        upcomingAppointments.map(event => <EventCard key={event.title + event.date} event={event} />)
+                    {loading && <p className="p-4 text-sm text-muted-foreground">Loading...</p>}
+                    {!loading && upcomingAppointments.length > 0 ? (
+                        upcomingAppointments.map(event => <EventCard key={event.id} event={event} />)
                     ) : (
-                        <p className="text-sm text-muted-foreground p-4">No upcoming appointments scheduled.</p>
+                        !loading && <p className="text-sm text-muted-foreground p-4">No upcoming appointments scheduled.</p>
                     )}
                 </CardContent>
             </Card>
@@ -255,10 +286,11 @@ export default function HealthPage() {
                     <CardTitle>Immunization Record</CardTitle>
                 </CardHeader>
                 <CardContent className="p-0 max-h-96 overflow-y-auto">
-                    {immunizations.length > 0 ? (
-                        immunizations.map(event => <EventCard key={event.title + event.date} event={event} />)
+                    {loading && <p className="p-4 text-sm text-muted-foreground">Loading...</p>}
+                    {!loading && immunizations.length > 0 ? (
+                        immunizations.map(event => <EventCard key={event.id} event={event} />)
                     ) : (
-                        <p className="text-sm text-muted-foreground p-4">No immunization records logged.</p>
+                       !loading && <p className="text-sm text-muted-foreground p-4">No immunization records logged.</p>
                     )}
                 </CardContent>
             </Card>
@@ -269,9 +301,12 @@ export default function HealthPage() {
                 <CardDescription>A reverse chronological log of past appointments and notes.</CardDescription>
             </CardHeader>
             <CardContent className="p-0 max-h-[60vh] overflow-y-auto">
-                {[...pastAppointments, ...notes].sort((a,b) => b.date.getTime() - a.date.getTime()).map(event => (
-                    <EventCard key={event.title + event.date} event={event} />
-                ))}
+                {loading && <p className="p-4 text-sm text-muted-foreground">Loading...</p>}
+                {!loading && [...pastAppointments, ...notes].length > 0 ? ([...pastAppointments, ...notes].sort((a,b) => b.date.toMillis() - a.date.toMillis()).map(event => (
+                    <EventCard key={event.id} event={event} />
+                ))) : (
+                   !loading && <p className="p-4 text-sm text-muted-foreground">No past events.</p>
+                )}
             </CardContent>
        </Card>
     </div>
