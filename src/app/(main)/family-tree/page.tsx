@@ -1,4 +1,3 @@
-// src/app/(main)/family-tree/page.tsx
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Metadata } from 'next';
 import { cn } from '@/lib/utils';
