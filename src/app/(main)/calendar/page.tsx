@@ -5,9 +5,12 @@ import * as React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
 import { format, isSameDay, getDay, isTuesday, isThursday, isSunday, getWeek, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
-import { Cake, Users, Handshake, Phone, Clock } from 'lucide-react';
+import { Cake, Users, Handshake, Phone } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { familyMembers } from '@/app/(main)/family-tree/page';
+import { cn } from '@/lib/utils';
+
 
 type CalendarEvent = {
   date: Date;
@@ -17,14 +20,13 @@ type CalendarEvent = {
 
 // --- Data based on family tree and user request ---
 const familyBirthdays = [
-    { name: "Harper Ryan", date: new Date(2025, 10, 12) }, // Nov 12
-    { name: "Dad (Craig)", date: new Date(1990, 2, 23) },  // Mar 23
-    { name: "Mom (Emma)", date: new Date(1995, 11, 15) }, // Dec 15
+    { name: familyMembers.harper.name, date: new Date(2025, 10, 12) }, // Nov 12
+    ...familyMembers.parents.map(p => ({ name: p.name, date: new Date(new Date().getFullYear(), parseInt(p.dob.split('/')[0]) - 1, parseInt(p.dob.split('/')[1])) }))
 ];
 
 const custodyParents = {
-    dad: { name: "Dad", color: "bg-blue-200 dark:bg-blue-800" },
-    mom: { name: "Mom", color: "bg-pink-200 dark:bg-pink-800" },
+    dad: { name: "Dad", color: "bg-dad" },
+    mom: { name: "Mom", color: "bg-mom" },
     alternate: { name: "Alternate Block", color: "bg-gray-200 dark:bg-gray-700"}
 };
 
@@ -100,16 +102,16 @@ export default function CalendarPage() {
   }
 
   const modifiers = {
-      mom: (day: Date) => dayHasEventType(day, 'custody') && !isSunday(day),
+      mom: (day: Date) => dayHasEventType(day, 'custody') && !isSunday(day) && !isTuesday(day) && !isThursday(day),
       dad: isSunday,
       alternate: (day: Date) => isTuesday(day) || isThursday(day),
       birthday: (day: Date) => dayHasEventType(day, 'birthday'),
   };
   
   const modifiersClassNames = {
-      mom: 'bg-mom text-white rounded-md',
-      dad: 'bg-dad text-white rounded-md',
-      alternate: 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 rounded-md',
+      mom: cn('bg-mom text-white rounded-md', custodyParents.mom.color),
+      dad: cn('bg-dad text-white rounded-md', custodyParents.dad.color),
+      alternate: 'bg-muted text-muted-foreground/80 rounded-md',
       birthday: 'font-bold border-2 border-accent rounded-full',
   };
 
@@ -119,13 +121,13 @@ export default function CalendarPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-headline font-extra-bold uppercase tracking-tight">Family Calendar</h1>
+        <h1 className="text-3xl font-headline font-extrabold uppercase tracking-tight">Family Calendar</h1>
         <p className="text-muted-foreground mt-1">
           Coordinate schedules, events, and memories based on the current plan.
         </p>
       </div>
       <div className="grid gap-8 md:grid-cols-3">
-        <Card className="md:col-span-2 shadow-lg hover:shadow-xl transition-shadow duration-300">
+        <Card className="md:col-span-2">
           <CardContent className="p-0">
             <Calendar
               mode="single"
@@ -144,15 +146,15 @@ export default function CalendarPage() {
                 </CardHeader>
                 <CardContent className="space-y-3">
                     <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 rounded-full bg-mom"></div>
+                        <div className={cn("w-4 h-4 rounded-full", custodyParents.mom.color)}></div>
                         <span className="text-sm font-medium">{custodyParents.mom.name}'s Time</span>
                     </div>
                      <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 rounded-full bg-dad"></div>
+                        <div className={cn("w-4 h-4 rounded-full", custodyParents.dad.color)}></div>
                         <span className="text-sm font-medium">{custodyParents.dad.name}'s Time</span>
                     </div>
                      <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 rounded-full bg-gray-200 border"></div>
+                        <div className={cn("w-4 h-4 rounded-full", custodyParents.alternate.color)}></div>
                         <span className="text-sm font-medium">{custodyParents.alternate.name}</span>
                     </div>
                      <div className="flex items-center gap-2">

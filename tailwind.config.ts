@@ -17,11 +17,11 @@ export default {
     },
     extend: {
       fontFamily: {
-        body: ['var(--font-nunito)', 'sans-serif'],
-        headline: ['var(--font-nunito)', 'sans-serif'],
+        sans: ['var(--font-open-sans)', 'sans-serif'],
+        headline: ['var(--font-montserrat)', 'sans-serif'],
       },
       fontWeight: {
-        'extra-bold': '900',
+        'extrabold': '800',
       },
       colors: {
         background: 'hsl(var(--background))',

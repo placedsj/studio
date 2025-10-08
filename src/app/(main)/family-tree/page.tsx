@@ -1,5 +1,5 @@
 // src/app/(main)/family-tree/page.tsx
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Metadata } from 'next';
 import { cn } from '@/lib/utils';
 
@@ -7,30 +7,30 @@ export const metadata: Metadata = {
   title: "Family Tree | Harper's Home",
 };
 
-const familyMembers = {
+export const familyMembers = {
     harper: { name: "Harper Ryan", dob: "11/12/2024" },
     parents: [
-        { name: "Dad (Craig)", dob: "03/23/1990", side: 'paternal' },
-        { name: "Mom (Emma)", dob: "12/15/1995", side: 'maternal' },
+        { name: "Dad (Craig)", dob: "03/23/1990", side: 'paternal' as const },
+        { name: "Mom (Emma)", dob: "12/15/1995", side: 'maternal' as const },
     ],
     maternalGrandparents: [
-        { name: "Nanny Ryan (Jane)", side: 'maternal' },
-        { name: "Grampy Ryan (Sonny)", side: 'maternal' },
+        { name: "Nanny Ryan (Jane)", side: 'maternal' as const },
+        { name: "Grampy Ryan (Sonny)", side: 'maternal' as const },
     ],
     paternalGrandparents: [
-        { name: "Grammy Campbell (Stacey)", side: 'paternal' },
+        { name: "Grammy Campbell (Stacey)", side: 'paternal' as const },
     ],
     maternalAuntsUncles: [
-        { name: "Aunt Amber", side: 'maternal' },
-        { name: "Aunt Marissa", side: 'maternal' },
-        { name: "Uncle Nick", side: 'maternal' },
-        { name: "Uncle Matt", side: 'maternal' },
+        { name: "Aunt Amber", side: 'maternal' as const },
+        { name: "Aunt Marissa", side: 'maternal' as const },
+        { name: "Uncle Nick", side: 'maternal' as const },
+        { name: "Uncle Matt", side: 'maternal' as const },
     ],
     paternalAuntsUncles: [
     ],
     maternalCousins: [
-        { name: "Cousin Logan", side: 'maternal' },
-        { name: "Cousin Wyatt", side: 'maternal' },
+        { name: "Cousin Logan", side: 'maternal' as const },
+        { name: "Cousin Wyatt", side: 'maternal' as const },
     ],
     paternalCousins: [
     ]
@@ -57,7 +57,7 @@ const FamilyBranch = ({ title, members, side }: { title: string, members: Omit<F
         <div className="space-y-2">
             <h3 className={cn(
                 "font-semibold text-center text-sm uppercase tracking-wider pb-1 border-b-2",
-                side === 'maternal' ? 'border-accent text-accent-foreground' : 'border-primary text-primary'
+                side === 'maternal' ? 'border-mom text-mom' : 'border-dad text-dad'
             )}>{title}</h3>
             <div className="flex justify-center flex-wrap gap-4 pt-2">
                 {members.map(member => <FamilyMemberCard key={member.name} {...member} />)}
@@ -70,7 +70,7 @@ export default function FamilyTreePage() {
   return (
     <div className="space-y-8">
         <div>
-            <h1 className="text-3xl font-headline font-extra-bold uppercase tracking-tight">Family Tree</h1>
+            <h1 className="text-3xl font-headline font-extrabold uppercase tracking-tight">Family Tree</h1>
             <p className="text-muted-foreground mt-1">
                 A visual map of Harper's loving family and support system.
             </p>
@@ -79,8 +79,8 @@ export default function FamilyTreePage() {
         <div className="space-y-12 flex flex-col items-center">
             {/* Harper */}
              <div className="flex flex-col items-center text-center">
-                 <div className="leading-tight p-4 bg-yellow-100 border-2 border-yellow-300 rounded-lg">
-                    <p className="font-bold text-xl">{familyMembers.harper.name}</p>
+                 <div className="leading-tight p-4 bg-accent/20 border-2 border-accent rounded-lg">
+                    <p className="font-bold text-xl text-accent-foreground">{familyMembers.harper.name}</p>
                     <p className="text-sm text-muted-foreground">{familyMembers.harper.dob}</p>
                 </div>
             </div>
@@ -103,9 +103,9 @@ export default function FamilyTreePage() {
 
             {/* Grandparents & Aunts/Uncles/Cousins */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full">
-                <Card className="bg-primary/5 border-primary/20">
+                <Card className="bg-dad/5 border-dad/20">
                     <CardHeader>
-                        <CardTitle className="text-center text-primary">Dad's Family</CardTitle>
+                        <CardTitle className="text-center text-dad">Dad's Family</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-6">
                         <FamilyBranch title="Grandparents" members={familyMembers.paternalGrandparents} side="paternal" />
@@ -114,9 +114,9 @@ export default function FamilyTreePage() {
                     </CardContent>
                 </Card>
 
-                 <Card className="bg-accent/5 border-accent/20">
+                 <Card className="bg-mom/5 border-mom/20">
                     <CardHeader>
-                        <CardTitle className="text-center text-accent-foreground">Mom's Family</CardTitle>
+                        <CardTitle className="text-center text-mom">Mom's Family</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-6">
                        <FamilyBranch title="Grandparents" members={familyMembers.maternalGrandparents} side="maternal" />

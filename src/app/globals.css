@@ -13,12 +13,12 @@
     --popover: 0 0% 100%;
     --popover-foreground: 220 10% 20%;
 
-    --primary: 215 100% 15%; /* --navy-blue */
-    --primary-dark: 215 100% 11%;
+    --primary: 271 76% 53%; /* Electric Purple */
+    --primary-dark: 271 76% 40%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 220 13% 91%; /* --silver-gray */
-    --secondary-foreground: 215 100% 15%;
+    --secondary-foreground: 271 76% 53%;
 
     --muted: 220 13% 91%;
     --muted-foreground: 220 9% 45%; /* --text-color-light */
@@ -31,44 +31,44 @@
 
     --border: 220 13% 80%; /* --border-color */
     --input: 220 13% 80%;
-    --ring: 215 100% 15%;
+    --ring: 271 76% 53%;
     --radius: 0.75rem;
 
-    --mom-day: 330 100% 70%;
-    --dad-day: 210 80% 60%;
+    --mom-day: 330 80% 65%; /* Vibrant Pink/Red */
+    --dad-day: 210 80% 60%; /* Bright Blue */
   }
 
   .dark {
-    --background: 215 100% 8%; 
-    --foreground: 220 13% 91%; 
+    --background: 240 10% 4%; /* Near Black */
+    --foreground: 210 40% 98%; 
 
-    --card: 215 100% 12%; 
-    --card-foreground: 220 13% 91%;
+    --card: 240 10% 10%; 
+    --card-foreground: 210 40% 98%;
 
-    --popover: 215 100% 8%;
-    --popover-foreground: 220 13% 91%;
+    --popover: 240 10% 4%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 45 100% 50%; /* --pale-yellow-orange */
-    --primary-dark: 45 100% 40%;
-    --primary-foreground: 215 100% 8%;
+    --primary: 271 76% 63%; /* Electric Purple */
+    --primary-dark: 271 76% 70%;
+    --primary-foreground: 240 10% 4%;
 
-    --secondary: 215 100% 15%; 
-    --secondary-foreground: 220 13% 91%;
+    --secondary: 240 10% 15%; 
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 215 100% 15%;
-    --muted-foreground: 220 9% 45%;
+    --muted: 240 10% 15%;
+    --muted-foreground: 240 5% 65%;
 
     --accent: 45 100% 50%; 
-    --accent-foreground: 215 100% 8%;
+    --accent-foreground: 240 10% 4%;
 
     --destructive: 0 63% 31%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 215 100% 20%;
-    --input: 215 100% 20%;
-    --ring: 45 100% 50%;
+    --border: 240 10% 20%;
+    --input: 240 10% 20%;
+    --ring: 271 76% 63%;
     
-    --mom-day: 330 100% 70%;
+    --mom-day: 330 80% 65%;
     --dad-day: 210 80% 60%;
   }
 }
@@ -79,11 +79,11 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'Open Sans', sans-serif;
+    font-family: var(--font-open-sans), sans-serif;
   }
   h1, h2, h3, h4, h5, h6 {
-      font-family: 'Montserrat', sans-serif;
-      @apply text-primary;
+      font-family: var(--font-montserrat), sans-serif;
+      @apply font-extrabold text-foreground;
   }
 }
 
@@ -94,7 +94,7 @@
         @apply max-w-7xl mx-auto my-8 px-4 sm:px-6 lg:px-8 flex flex-col gap-6;
     }
     .page-header h1 {
-        @apply text-5xl font-bold uppercase tracking-tighter mb-1;
+        @apply text-5xl uppercase tracking-tighter mb-1;
     }
     .page-header p {
         @apply text-muted-foreground text-lg;
@@ -129,7 +129,7 @@
     .event-list {
         @apply flex flex-col gap-4;
     }
-    .event-item.card {
+    .event-item {
         @apply p-6;
     }
     .event-meta {
