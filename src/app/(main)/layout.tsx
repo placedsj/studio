@@ -4,6 +4,7 @@
 import { MainNav } from '@/components/main-nav';
 import { UserNav } from '@/components/user-nav';
 import { CoParentingTip } from '@/components/co-parenting-tip';
+import { SiteFooter } from '@/components/site-footer';
 
 export default function AppLayout({
   children,
@@ -12,7 +13,7 @@ export default function AppLayout({
 }) {
 
   return (
-    <div className="flex-col md:flex bg-background min-h-screen">
+    <div className="flex flex-col min-h-screen bg-background">
         <header className="border-b bg-card sticky top-0 z-40 shadow-sm">
           <div className="flex h-16 items-center px-4 container mx-auto">
              <h1 className="text-2xl font-headline font-extra-bold tracking-tight mr-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
@@ -30,6 +31,7 @@ export default function AppLayout({
             <CoParentingTip />
           </div>
         </main>
+        <SiteFooter />
     </div>
   );
 }

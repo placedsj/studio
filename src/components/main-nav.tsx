@@ -20,7 +20,6 @@ const legalEvidenceItems = [
     { href: '/evidence-log', label: 'Evidence Log' },
     { href: '/evidence-ai', label: 'Evidence AI Assistant' },
     { href: '/document-analyzer', label: 'Document Analyzer' },
-    { href: '/blueprint', label: 'The Stability Blueprint' },
 ];
 
 const aiToolsItems = [
@@ -37,9 +36,35 @@ const childFocusedItems = [
     { href: '/family-tree', label: 'Family Tree' },
 ]
 
-const aboutItems = [
-    { href: '/about', label: 'About Us' },
-]
+const NavDropdown = ({ label, items }: { label: string, items: {href: string, label: string}[] }) => {
+    const pathname = usePathname();
+    const isActive = items.some(item => pathname.startsWith(item.href));
+
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className={cn(
+                    "text-sm font-medium transition-colors hover:text-primary p-0 h-auto",
+                    isActive ? "text-primary" : "text-muted-foreground"
+                )}>
+                    {label}
+                    <ChevronDown className="w-4 h-4 ml-1" />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="start" forceMount>
+                <DropdownMenuGroup>
+                     {items.map((item) => (
+                        <Link href={item.href} key={item.href} passHref>
+                            <DropdownMenuItem>
+                                {item.label}
+                            </DropdownMenuItem>
+                        </Link>
+                    ))}
+                </DropdownMenuGroup>
+            </DropdownMenuContent>
+      </DropdownMenu>
+    );
+};
 
 export function MainNav({
   className,
@@ -57,68 +82,16 @@ export function MainNav({
           key={item.href}
           href={item.href}
           className={cn(
-              "text-sm font-medium transition-colors hover:text-primary relative",
+              "text-sm font-medium transition-colors hover:text-primary",
               pathname === item.href ? "text-primary" : "text-muted-foreground"
           )}
         >
           {item.label}
-           {pathname === item.href && (
-            <span className="absolute bottom-[-8px] left-0 right-0 h-0.5 bg-primary rounded-full" />
-          )}
         </Link>
       ))}
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="text-sm font-medium text-muted-foreground hover:text-primary p-0 h-auto">
-                More
-                <ChevronDown className="w-4 h-4 ml-1" />
-            </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56" align="start" forceMount>
-            <DropdownMenuLabel>Child-Focused</DropdownMenuLabel>
-            <DropdownMenuGroup>
-                 {childFocusedItems.map((item) => (
-                    <Link href={item.href} key={item.href} passHref>
-                        <DropdownMenuItem>
-                            {item.label}
-                        </DropdownMenuItem>
-                    </Link>
-                ))}
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuLabel>Legal & Evidence</DropdownMenuLabel>
-            <DropdownMenuGroup>
-                 {legalEvidenceItems.map((item) => (
-                    <Link href={item.href} key={item.href} passHref>
-                        <DropdownMenuItem>
-                            {item.label}
-                        </DropdownMenuItem>
-                    </Link>
-                ))}
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuLabel>AI Tools</DropdownMenuLabel>
-             <DropdownMenuGroup>
-                 {aiToolsItems.map((item) => (
-                    <Link href={item.href} key={item.href} passHref>
-                        <DropdownMenuItem>
-                            {item.label}
-                        </DropdownMenuItem>
-                    </Link>
-                ))}
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-             <DropdownMenuGroup>
-                 {aboutItems.map((item) => (
-                    <Link href={item.href} key={item.href} passHref>
-                        <DropdownMenuItem>
-                            {item.label}
-                        </DropdownMenuItem>
-                    </Link>
-                ))}
-            </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <NavDropdown label="Child-Focused" items={childFocusedItems} />
+      <NavDropdown label="Legal & Evidence" items={legalEvidenceItems} />
+      <NavDropdown label="AI Tools" items={aiToolsItems} />
     </nav>
   )
 }
