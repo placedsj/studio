@@ -1,5 +1,3 @@
-
-// src/app/(auth)/signup/page.tsx
 'use client';
 
 import { useState } from 'react';
@@ -62,10 +60,10 @@ export default function SignUpPage() {
     return (
         <div className="flex items-center justify-center min-h-screen">
             <Card className="mx-auto max-w-sm">
-                <CardHeader>
-                    <CardTitle className="text-xl">Sign Up</CardTitle>
+                <CardHeader className="text-center">
+                    <CardTitle className="text-2xl">Create an Account</CardTitle>
                     <CardDescription>
-                        Enter your information to create an account
+                        Enter your information to get started.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -132,12 +130,12 @@ export default function SignUpPage() {
                         </form>
                     </Form>
                      <Separator className="my-4" />
-                    <Button variant="outline" className="w-full" onClick={handleGuestMode}>
+                    <Button variant="secondary" className="w-full" onClick={handleGuestMode}>
                             Continue as Guest
                     </Button>
                     <div className="mt-4 text-center text-sm">
                         Already have an account?{" "}
-                        <Link href="/login" className="underline">
+                        <Link href="/login-form" className="text-primary/80 hover:text-primary font-semibold">
                             Login
                         </Link>
                     </div>

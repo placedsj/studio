@@ -1,4 +1,3 @@
-// src/app/(auth)/login-form/page.tsx
 'use client';
 
 import { useState } from 'react';
@@ -52,12 +51,12 @@ export default function LoginFormPage() {
   return (
     <div className="flex items-center justify-center min-h-screen">
       <Card className="mx-auto max-w-sm">
-        <CardHeader>
+        <CardHeader className="relative">
            <Button variant="ghost" size="sm" className="absolute left-2 top-2" onClick={() => router.back()}>
              &larr; Back
           </Button>
-          <CardTitle className="text-2xl pt-8">Parent Login</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-2xl pt-8 text-center">Parent Login</CardTitle>
+          <CardDescription className="text-center">
             Enter your email below to login to your account.
           </CardDescription>
         </CardHeader>
@@ -86,9 +85,9 @@ export default function LoginFormPage() {
                       <FormLabel>Password</FormLabel>
                       <Link
                         href="#"
-                        className="ml-auto inline-block text-sm text-secondary"
+                        className="ml-auto inline-block text-sm text-primary/80 hover:text-primary"
                       >
-                        Forgot your password?
+                        Forgot password?
                       </Link>
                     </div>
                     <FormControl>
@@ -106,7 +105,7 @@ export default function LoginFormPage() {
           </Form>
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{" "}
-            <Link href="/signup" className="text-secondary">
+            <Link href="/signup" className="text-primary/80 hover:text-primary font-semibold">
               Sign up
             </Link>
           </div>
